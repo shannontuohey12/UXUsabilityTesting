@@ -33,32 +33,36 @@ While participants are using the URL provided by the researcher, certain informa
 
 ### Technical Architecture 
 I will use a MVC (Model-View-Controller) architecture for this application.
-Model - Database
+
+#### Model - Database
 MySQL, a relational database, will be used to store information. Entities include:
 - Researcher
-Participant
-Study
-Website
-Task
-Session
-Event
-Feedback
+- Participant
+- Session
+- Study
+- Event
+- Task
+- TaskAttempt
 
-View - Frontend
+#### View - Frontend
 The frontend will provide separate dashboards for Researchers and Participants. For researchers, they will have a more data-driven dashboard where they can view analytics regarding their tests. There will be a section to create a new test as well. 
 For participants, they will have a simple interface with tasks displayed and the embedded website to test. They will also have a feedback section for any written responses. 
-HTML/CSS/JavaScript
-React 
-Figma to design screens
-Controller - Backend
+- HTML/CSS/JavaScript
+- React 
+- Figma to design screens
+  
+#### Controller - Backend
 The backend will be developed using JavaScript, Node.js, and Express.js. The Express server will receive requests from the frontend, process the logic, communicate with the database, and return the requested information to the frontend.
 The backend will be responsible for:
-Authentication and authorization
-Study management
-Task management
-Participant sessions
-Event collection
-Data processing
-Analytics calculations
-Communication with the database
+- Authentication and authorization
+- Study management
+- Task management
+- Participant sessions
+- Event collection
+- Data processing
+- Analytics calculations
+- Communication with the database
+
+### Entity Relationship Diagram (ERD)
+![Entity Relationship Diagram](UXApp.jpeg)
 
