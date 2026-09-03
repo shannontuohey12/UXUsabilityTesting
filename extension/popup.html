@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UX Tracker</title>
+
+    <style>
+        body {
+            width: 300px;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h3>UX Research Tracker</h3>
+
+    <input
+        id="websiteUrl"
+        type="text"
+        placeholder="https://example.com"
+    />
+
+    <button id="startTracking">
+        Start Tracking
+    </button>
+
+    <div id="status"></div>
+
+    <script src="popup.js"></script>
+
+</body>
+</html>
