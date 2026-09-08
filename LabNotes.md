@@ -16,3 +16,7 @@ I then created a `studies` table which contains information such as the study na
 Most recently - I connected participant events to studies and sessions. I added a study_id field to the events table so that each interaction would be associated to the correct study. I also created a `sessions` table containing the study ID, a unique participant session ID, and the session start and end times. I successfully tested this connection and confirmed that events can be associated with both a specific study and participant session. 
 
 My next steps are to add tasks that the participants can complete during a study. I then want to start developing the frontend researcher dashboard to start organizing and displaying useful data that I am collecting.
+
+### Next Steps 
+Start building the researchers dashboard -- how I can add hard data and analytics in a report, graphs etc. Evaluate my website and generate some report for the user. 
+Fix the architecture so its request response. Push participant and researcher together. 
