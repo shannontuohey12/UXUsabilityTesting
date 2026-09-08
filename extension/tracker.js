@@ -1,3 +1,5 @@
+const STUDY_ID = 2;
+
 // ========================================
 // SESSION
 // ========================================
@@ -14,6 +16,20 @@ if (!sessionId) {
 
 console.log("UX Tracker Session:", sessionId);
 
+fetch("http://localhost:3000/api/sessions", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        studyId: STUDY_ID,
+        sessionId: sessionId
+    })
+})
+.then(response => response.json())
+.then(data => console.log("Session created:", data))
+.catch(error => console.error("Session error:", error));
+
 
 // ========================================
 // EVENT TRACKING
@@ -22,6 +38,7 @@ console.log("UX Tracker Session:", sessionId);
 function trackEvent(type, data = {}) {
 
     const event = {
+        studyId: STUDY_ID,
         sessionId,
         type,
         url: window.location.href,
