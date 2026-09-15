@@ -34,7 +34,7 @@ While participants are using the URL provided by the researcher, certain informa
 ### Technical Architecture 
 I will use a MVC (Model-View-Controller) architecture for this application.
 
-![System Architecture Diagram](images/UXSystemArchitecture.jpeg)
+![System Architecture Diagram](images/UXSystemArchitectureDiagram.jpeg)
 #### Model - Database
 MySQL, a relational database, will be used to store information. Entities include:
 - Researcher

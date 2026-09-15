@@ -141,6 +141,137 @@ app.post("/api/events", (req, res) => {
     });
 });
 
+
+// STUDY ANALYTICS
+
+app.get("/api/studies/:id/analytics", (req, res) => {
+    const studyId = req.params.id;
+
+    // Get study information
+    const study = db.prepare(`
+        SELECT *
+        FROM studies
+        WHERE id = ?
+    `).get(studyId);
+
+    if (!study) {
+        return res.status(404).json({
+            success: false,
+            message: "Study not found."
+        });
+    }
+
+    // Count participants/sessions
+    const participants = db.prepare(`
+        SELECT COUNT(DISTINCT session_id) AS count
+        FROM sessions
+        WHERE study_id = ?
+    `).get(studyId);
+
+    // Count all events
+    const totalEvents = db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM events
+        WHERE study_id = ?
+    `).get(studyId);
+
+    // Count clicks
+    const clicks = db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM events
+        WHERE study_id = ?
+        AND type = 'CLICK'
+    `).get(studyId);
+
+    // Count page views
+    const pageViews = db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM events
+        WHERE study_id = ?
+        AND type = 'PAGE_VIEW'
+    `).get(studyId);
+
+    // Count scroll events
+    const scrolls = db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM events
+        WHERE study_id = ?
+        AND type = 'SCROLL'
+    `).get(studyId);
+
+    // Get event activity by minute
+    const eventActivity = db.prepare(`
+        SELECT
+            strftime('%Y-%m-%d %H:%M', timestamp) AS minute,
+            COUNT(*) AS count
+        FROM events
+        WHERE study_id = ?
+        GROUP BY minute
+        ORDER BY minute ASC
+    `).all(studyId);
+
+    // Get most clicked elements
+    const clickEvents = db.prepare(`
+        SELECT data
+        FROM events
+        WHERE study_id = ?
+        AND type = 'CLICK'
+    `).all(studyId);
+
+    const clickCounts = {};
+
+    clickEvents.forEach((event) => {
+        try {
+            const data = JSON.parse(event.data);
+
+            let elementName = data.text?.trim();
+
+            if (!elementName) {
+                elementName = data.id;
+            }
+
+            if (!elementName) {
+                elementName = data.element;
+            }
+
+            if (!elementName) {
+                elementName = "Unknown element";
+            }
+
+            clickCounts[elementName] =
+                (clickCounts[elementName] || 0) + 1;
+
+        } catch (error) {
+            console.error("Error parsing click event:", error);
+        }
+    });
+
+    const mostClickedElements = Object.entries(clickCounts)
+        .map(([element, clicks]) => ({
+            element,
+            clicks
+        }))
+        .sort((a, b) => b.clicks - a.clicks);
+
+    res.json({
+        success: true,
+
+        study: {
+            id: study.id,
+            name: study.name,
+            targetUrl: study.target_url
+        },
+
+        participants: participants.count,
+        totalEvents: totalEvents.count,
+        clicks: clicks.count,
+        pageViews: pageViews.count,
+        scrolls: scrolls.count,
+        eventActivity: eventActivity,
+        mostClickedElements: mostClickedElements
+    });
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Backend running at http://localhost:${PORT}`);
