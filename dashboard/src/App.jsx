@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import {
     LineChart,
     Line,
+    BarChart,
+    Bar,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -16,9 +18,10 @@ function App() {
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [studyId, setStudyId] = useState(2);
 
     useEffect(() => {
-        fetch("http://localhost:3000/api/studies/2/analytics")
+        fetch(`http://localhost:3000/api/studies/${studyId}/analytics`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch analytics");
@@ -35,7 +38,7 @@ function App() {
                 setError("Could not load study analytics.");
                 setLoading(false);
             });
-    }, []);
+    }, [studyId]);
 
     if (loading) {
         return <div className="loading">Loading dashboard...</div>;
@@ -54,9 +57,19 @@ function App() {
                     <p>{analytics.study.name}</p>
                 </div>
 
-                <div className="study-badge">
-                    Study #{analytics.study.id}
-                </div>
+                <div>
+                  <select
+                      value={studyId}
+                      onChange={(event) => {
+                          setStudyId(Number(event.target.value));
+                          setAnalytics(null);
+                          setLoading(true);
+                      }}
+                  >
+                      <option value={2}>Portfolio Usability Test</option>
+                      <option value={3}>Shawarma Nomad Usability Test</option>
+                  </select>
+              </div>
             </header>
 
             <main>
@@ -150,7 +163,44 @@ function App() {
                             {analytics.study.targetUrl}
                         </p>
                     </div>
+                    <section className="chart-card">
+                        <div className="chart-header">
+                            <div>
+                                <h2>Scroll Depth</h2>
+                                <p>How far participants scrolled on the website</p>
+                            </div>
+                        </div>
 
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={analytics.scrollDepth}>
+                                <CartesianGrid strokeDasharray="3 3" />
+
+                                <XAxis
+                                    dataKey="depth"
+                                    tickFormatter={(value) => `${value}%`}
+                                />
+
+                                <YAxis allowDecimals={false} />
+
+                                <Tooltip
+                                    formatter={(value) => [
+                                        value,
+                                        "Participants"
+                                    ]}
+                                    labelFormatter={(value) =>
+                                        `${value}% scroll depth`
+                                    }
+                                />
+
+                                <Bar
+                                    dataKey="participants"
+                                    fill="#6366f1"
+                                    radius={[6, 6, 0, 0]}
+                                />
+                            </BarChart>
+                        </ResponsiveContainer>
+
+                    </section>
                     <div className="analytics-card most-clicked-card">
 
                       <h2>Most Clicked Elements</h2>

@@ -220,6 +220,18 @@ app.get("/api/studies/:id/analytics", (req, res) => {
 
     const clickCounts = {};
 
+    //get scrolling depth
+    const scrollDepth = db.prepare(`
+        SELECT
+            json_extract(data, '$.scrollDepth') AS depth,
+            COUNT(DISTINCT session_id) AS participants
+        FROM events
+        WHERE study_id = ?
+        AND type = 'SCROLL'
+        GROUP BY depth
+        ORDER BY CAST(depth AS INTEGER)
+    `).all(studyId);
+
     clickEvents.forEach((event) => {
         try {
             const data = JSON.parse(event.data);
@@ -268,7 +280,8 @@ app.get("/api/studies/:id/analytics", (req, res) => {
         pageViews: pageViews.count,
         scrolls: scrolls.count,
         eventActivity: eventActivity,
-        mostClickedElements: mostClickedElements
+        mostClickedElements: mostClickedElements,
+        scrollDepth: scrollDepth
     });
 });
 

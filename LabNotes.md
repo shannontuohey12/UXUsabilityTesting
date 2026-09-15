@@ -1,8 +1,9 @@
 # Lab Notes
 ### Research & Links
 - https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Safely_inserting_external_content_into_a_page
+- https://recharts.github.io/en-US/guide/
 
-### Progress (as of 9/8)
+### Progress Update 9/8
 I developed a tracking script (`tracker.js`) that collects user interaction data such as clicks, page views, scrolling behavior, and navigation. I initially tested the script locally on my own websites and verified that it could successfully track interactions. I then tested the script on a separate website from the application where it was originally developed. This demonstrated that the tracker could be injected into and run on an external website rather than being limited to the application it was created for.
 
 Building on this, I developed a Chrome browser extension that allows a user to enter a target website and inject the tracking script into that site. I successfully tested the extension on both a basic external website and my personal Wix portfolio, where the tracker was able to detect real user interactions, including clicks, scrolling, and navigation between pages. This was an important proof of concept for the project, as it demonstrated that the platform can potentially collect usability data from websites without requiring the researcher to modify the website's source code.
@@ -15,8 +16,16 @@ I then created a `studies` table which contains information such as the study na
 
 Most recently - I connected participant events to studies and sessions. I added a study_id field to the events table so that each interaction would be associated to the correct study. I also created a `sessions` table containing the study ID, a unique participant session ID, and the session start and end times. I successfully tested this connection and confirmed that events can be associated with both a specific study and participant session. 
 
-My next steps are to add tasks that the participants can complete during a study. I then want to start developing the frontend researcher dashboard to start organizing and displaying useful data that I am collecting.
+### Progress Update 9/15 
 
-### Next Steps 
-Start building the researchers dashboard -- how I can add hard data and analytics in a report, graphs etc. Evaluate my website and generate some report for the user. 
-Fix the architecture so its request response. Push participant and researcher together. 
+My progress this week consisted of adding a dashboard for the researcher that displays data from participant sessions. I wanted to ensure that I could make a useful area where users could see the analytics from their website. I added many sections to the dashboard, including participant count, total events, page views, clicks, scroll events, and the study website. I also added an Event Activity graph to visualize participant interactions over time.
+
+To make the analytics more useful for UX researchers, I added visualizations for most clicked elements and scroll depth. The most clicked elements show which parts of the website participants interact with most frequently, while the scroll depth visualization shows how many participants reached different points on the page.
+
+All of this data is gathered from the backend and SQLite Database, allowing it to display analytics from actual usability tests. 
+
+I also implemented different studyIds so researchers can switch between multiple studies easily and see different data for each, separately.
+
+The current system can therefore collect participant interactions from an external website, store the data in SQLite, process the data through the backend, and present the results in a researcher-facing dashboard.
+
+Next, I want to start working on the participant dashboard. I'm still having some issues with separating different studies and I think the next step should be developing a way to generate different participant links so I don't have to hardcode the studyID. 

@@ -1,8 +1,6 @@
-const STUDY_ID = 2;
+const STUDY_ID = 3;
 
-// ========================================
 // SESSION
-// ========================================
 
 let sessionId = sessionStorage.getItem("trackerSessionId");
 
@@ -31,9 +29,7 @@ fetch("http://localhost:3000/api/sessions", {
 .catch(error => console.error("Session error:", error));
 
 
-// ========================================
 // EVENT TRACKING
-// ========================================
 
 function trackEvent(type, data = {}) {
 
@@ -64,9 +60,7 @@ function trackEvent(type, data = {}) {
 }
 
 
-// ========================================
 // PAGE VIEW
-// ========================================
 
 trackEvent("PAGE_VIEW", {
     screenWidth: window.screen.width,
@@ -76,9 +70,7 @@ trackEvent("PAGE_VIEW", {
 });
 
 
-// ========================================
 // CLICK TRACKING
-// ========================================
 
 document.addEventListener("click", (event) => {
 
@@ -102,9 +94,7 @@ document.addEventListener("click", (event) => {
 });
 
 
-// ========================================
 // SCROLL TRACKING
-// ========================================
 
 const scrollMilestones = [25, 50, 75, 100];
 
