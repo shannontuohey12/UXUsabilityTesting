@@ -30,8 +30,14 @@ The current system can therefore collect participant interactions from an extern
 
 Next, I want to start working on the participant dashboard. I'm still having some issues with separating different studies and I think the next step should be developing a way to generate different participant links so I don't have to hardcode the studyID. 
 
+### Progress Update 9/22
+
+This week I focused on enhancing the researcher dashboard that I created last week. I added a heatmap, allowing researchers to see where clicks are being made on their website. To ensure that researchers see their website in the background, I used playwright, a browser automation library, to take a screenshot of the homepage upon creating a study. I need to refine this as it looks like it may have been taking screenshots before some websites fully loaded. 
+
+Additionally, I added a feature to create a new study from the researcher dashboard. Upon creating a new study, a studyID is automatically assigned and a participant URL is generating including that studyID. This made it simple to remove the previously hardcoded studyID and instead have it be dynamic, so the backend reads the studyID from the URL the participant uses. Therefore, there is no longer any mix of the data between different studies that I was struggling with before. 
+
+I also added the beginnings of a participant frontend, showing the invitation to complete a study and a link to go to the participant URL. 
+
+Next, I want to add login and validation for the researcher, and refine the heatmaps. I want to continue refining the researcher dashboard and ensure all data is clear. I also want to finish up the participant frontend and add tasks to each study. 
+
 ### Next Steps 
-Adding a heatmap to show the dom naming conventions 
-Participant front end
-Adding in login functions
-10/20 - presentations 
