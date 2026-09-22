@@ -214,3 +214,143 @@ main {
 .clicked-element-row strong {
     margin-left: 15px;
 }
+
+.heatmap-container {
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+}
+.heatmap {
+    position: relative;
+    width: 100%;
+    max-height: 700px;
+    margin-top: 20px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: auto;
+}
+
+.heatmap-background {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.heatmap-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.click-point {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.55);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.study-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.create-study-button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.create-study-card {
+    margin-top: 20px;
+    padding: 24px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.create-study-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.create-study-header h2 {
+    margin: 0;
+}
+
+.create-study-header p {
+    margin-top: 6px;
+    color: #6b7280;
+}
+
+.close-button {
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.create-study-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.create-study-card label {
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.create-study-card input {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.create-study-submit {
+    margin-top: 12px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.participant-link {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+.participant-link h3 {
+    margin-top: 0;
+}
+
+.link-box {
+    display: flex;
+    gap: 8px;
+}
+
+.link-box input {
+    flex: 1;
+}
+
+.link-box button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}

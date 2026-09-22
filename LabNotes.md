@@ -29,3 +29,9 @@ I also implemented different studyIds so researchers can switch between multiple
 The current system can therefore collect participant interactions from an external website, store the data in SQLite, process the data through the backend, and present the results in a researcher-facing dashboard.
 
 Next, I want to start working on the participant dashboard. I'm still having some issues with separating different studies and I think the next step should be developing a way to generate different participant links so I don't have to hardcode the studyID. 
+
+### Next Steps 
+Adding a heatmap to show the dom naming conventions 
+Participant front end
+Adding in login functions
+10/20 - presentations 

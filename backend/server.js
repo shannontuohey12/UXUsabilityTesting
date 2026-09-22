@@ -1,9 +1,78 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./database");
-
+const { chromium } = require("playwright");
+const path = require("path");
+const fs = require("fs");
 const app = express();
+
+app.use(
+    "/screenshots",
+    express.static(
+        path.join(__dirname, "screenshots")
+    )
+);
+
 const PORT = 3000;
+
+async function captureWebsiteScreenshot(studyId, targetUrl) {
+    try {
+        console.log("Capturing screenshot for:", targetUrl);
+
+        const browser = await chromium.launch();
+
+        const page = await browser.newPage({
+            viewport: {
+                width: 1440,
+                height: 900
+            }
+        });
+
+        await page.goto(targetUrl, {
+            waitUntil: "domcontentloaded",
+            timeout: 60000
+        });
+
+        // Give the page time to finish rendering
+        await page.waitForTimeout(5000);
+
+        const screenshotDirectory = path.join(
+            __dirname,
+            "screenshots"
+        );
+
+        if (!fs.existsSync(screenshotDirectory)) {
+            fs.mkdirSync(screenshotDirectory);
+        }
+
+        const screenshotPath = path.join(
+            screenshotDirectory,
+            `study-${studyId}.png`
+        );
+
+        await page.screenshot({
+            path: screenshotPath,
+            fullPage: true
+        });
+
+        await browser.close();
+
+        console.log(
+            "Screenshot saved:",
+            screenshotPath
+        );
+
+        return screenshotPath;
+
+    } catch (error) {
+        console.error(
+            "Screenshot error:",
+            error.message
+        );
+
+        return null;
+    }
+}
 
 // Middleware
 app.use(cors());
@@ -13,6 +82,65 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.send("UX Research Platform backend is running!");
 });
+
+// StudyId 
+app.get("/test/:studyId", (req, res) => {
+    const studyId = Number(req.params.studyId);
+
+    const study = db.prepare(`
+        SELECT *
+        FROM studies
+        WHERE id = ?
+    `).get(studyId);
+
+    if (!study) {
+        return res.status(404).send("Study not found.");
+    }
+
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>${study.name}</title>
+        </head>
+
+        <body>
+            <h1>${study.name}</h1>
+
+            <p>
+                You are participating in this usability study.
+            </p>
+
+            <p>
+                Click the button below to begin.
+            </p>
+
+            <button onclick="startStudy()">
+                Start Study
+            </button>
+
+            <script>
+                function startStudy() {
+                    const targetUrl =
+                        ${JSON.stringify(study.target_url)};
+
+                    const separator =
+                        targetUrl.includes("?")
+                            ? "&"
+                            : "?";
+
+                    window.location.href =
+                        targetUrl +
+                        separator +
+                        "uxStudyId=${studyId}";
+                }
+            </script>
+        </body>
+        </html>
+    `);
+});
+
+
 
 //Create a study 
 app.post("/api/studies", (req, res) => {
@@ -49,18 +177,46 @@ app.post("/api/studies", (req, res) => {
         createdAt
     );
 
+    const studyId = result.lastInsertRowid;
+
+    captureWebsiteScreenshot(
+        studyId,
+        targetUrl
+    );
+
     console.log("STUDY CREATED:", result.lastInsertRowid);
 
     res.status(201).json({
         success: true,
         study: {
-            id: result.lastInsertRowid,
+            id: studyId,
             name: name,
             targetUrl: targetUrl,
             createdAt: createdAt
         }
     });
 });
+//studies get route 
+app.get("/api/studies", (req, res) => {
+    try {
+        const studies = db.prepare(`
+            SELECT *
+            FROM studies
+            ORDER BY id ASC
+        `).all();
+
+        res.json(studies);
+
+    } catch (error) {
+        console.error("Error fetching studies:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Could not fetch studies."
+        });
+    }
+});
+
 
 // Sessions 
 app.post("/api/sessions", (req, res) => {
@@ -145,7 +301,10 @@ app.post("/api/events", (req, res) => {
 // STUDY ANALYTICS
 
 app.get("/api/studies/:id/analytics", (req, res) => {
-    const studyId = req.params.id;
+    const studyId = Number(req.params.id);
+
+    const screenshotUrl =
+    `/screenshots/study-${studyId}.png`;
 
     // Get study information
     const study = db.prepare(`
@@ -219,6 +378,7 @@ app.get("/api/studies/:id/analytics", (req, res) => {
     `).all(studyId);
 
     const clickCounts = {};
+    const heatmapData = [];
 
     //get scrolling depth
     const scrollDepth = db.prepare(`
@@ -233,30 +393,49 @@ app.get("/api/studies/:id/analytics", (req, res) => {
     `).all(studyId);
 
     clickEvents.forEach((event) => {
-        try {
-            const data = JSON.parse(event.data);
 
-            let elementName = data.text?.trim();
+    try {
 
-            if (!elementName) {
-                elementName = data.id;
-            }
+        const data = JSON.parse(event.data);
 
-            if (!elementName) {
-                elementName = data.element;
-            }
+        // HEATMAP DATA
 
-            if (!elementName) {
-                elementName = "Unknown element";
-            }
-
-            clickCounts[elementName] =
-                (clickCounts[elementName] || 0) + 1;
-
-        } catch (error) {
-            console.error("Error parsing click event:", error);
+        if (
+            data.x !== undefined &&
+            data.y !== undefined
+        ) {
+            heatmapData.push({
+                x: data.x,
+                y: data.y
+            });
         }
-    });
+
+        // MOST CLICKED ELEMENTS
+
+        let elementName = data.text?.trim();
+
+        if (!elementName) {
+            elementName = data.id;
+        }
+
+        if (!elementName) {
+            elementName = data.element;
+        }
+
+        if (!elementName) {
+            elementName = "Unknown element";
+        }
+
+        clickCounts[elementName] =
+            (clickCounts[elementName] || 0) + 1;
+
+    } catch (error) {
+
+        console.error("Error parsing click event:", error);
+
+    }
+
+});
 
     const mostClickedElements = Object.entries(clickCounts)
         .map(([element, clicks]) => ({
@@ -281,7 +460,9 @@ app.get("/api/studies/:id/analytics", (req, res) => {
         scrolls: scrolls.count,
         eventActivity: eventActivity,
         mostClickedElements: mostClickedElements,
-        scrollDepth: scrollDepth
+        scrollDepth: scrollDepth,
+        heatmapData: heatmapData,
+        screenshotUrl: screenshotUrl
     });
 });
 

@@ -1,13 +1,35 @@
-const STUDY_ID = 3;
 
+// STUDY ID
+
+const params = new URLSearchParams(
+    window.location.search
+);
+
+let studyId =
+    params.get("uxStudyId") ||
+    sessionStorage.getItem("uxStudyId");
+
+if (!studyId) {
+    console.error("No study ID found.");
+} else {
+    sessionStorage.setItem(
+        "uxStudyId",
+        studyId
+    );
+}
+
+console.log("UX Tracker Study ID:", studyId);
 // SESSION
 
-let sessionId = sessionStorage.getItem("trackerSessionId");
+let sessionId = sessionStorage.getItem(
+    `trackerSessionId_${studyId}`
+);
 
 if (!sessionId) {
     sessionId = crypto.randomUUID();
+
     sessionStorage.setItem(
-        "trackerSessionId",
+        `trackerSessionId_${studyId}`,
         sessionId
     );
 }
@@ -20,7 +42,7 @@ fetch("http://localhost:3000/api/sessions", {
         "Content-Type": "application/json"
     },
     body: JSON.stringify({
-        studyId: STUDY_ID,
+        studyId: Number(studyId),
         sessionId: sessionId
     })
 })
@@ -34,7 +56,7 @@ fetch("http://localhost:3000/api/sessions", {
 function trackEvent(type, data = {}) {
 
     const event = {
-        studyId: STUDY_ID,
+        studyId: Number(studyId),
         sessionId,
         type,
         url: window.location.href,
@@ -77,19 +99,15 @@ document.addEventListener("click", (event) => {
     const element = event.target;
 
     trackEvent("CLICK", {
-
-        element: element.tagName,
-
-        text: element.innerText || "",
-
-        id: element.id || "",
-
-        className: element.className || "",
-
-        x: event.clientX,
-
-        y: event.clientY
-    });
+    element: element.tagName,
+    text: element.innerText || "",
+    id: element.id || "",
+    className: element.className || "",
+    x: event.pageX,
+    y: event.pageY,
+    pageWidth: document.documentElement.scrollWidth,
+    pageHeight: document.documentElement.scrollHeight
+});
 
 });
 
