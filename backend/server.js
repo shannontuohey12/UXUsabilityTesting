@@ -102,45 +102,122 @@ app.get("/test/:studyId", (req, res) => {
         <html>
         <head>
             <title>${study.name}</title>
+
+            <style>
+                body {
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                }
+
+                .study-header {
+                    padding: 20px;
+                    background: white;
+                    border-bottom: 1px solid #ddd;
+                }
+
+                .study-header h1 {
+                    margin: 0 0 5px 0;
+                }
+
+                .study-header p {
+                    margin: 0;
+                    color: #666;
+                }
+
+                .website-container {
+                    width: 100%;
+                    height: calc(100vh - 90px);
+                }
+
+                iframe {
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                }
+            </style>
         </head>
 
         <body>
-            <h1>${study.name}</h1>
 
-            <p>
-                You are participating in this usability study.
-            </p>
+            <div class="study-header">
+                <h1>${study.name}</h1>
+                <p>Complete the tasks on the website below.</p>
+            </div>
 
-            <p>
-                Click the button below to begin.
-            </p>
+            <div class="website-container">
+                <iframe
+                    src="/proxy/${studyId}"
+                    title="${study.name}"
+                ></iframe>
+            </div>
 
-            <button onclick="startStudy()">
-                Start Study
-            </button>
-
-            <script>
-                function startStudy() {
-                    const targetUrl =
-                        ${JSON.stringify(study.target_url)};
-
-                    const separator =
-                        targetUrl.includes("?")
-                            ? "&"
-                            : "?";
-
-                    window.location.href =
-                        targetUrl +
-                        separator +
-                        "uxStudyId=${studyId}";
-                }
-            </script>
         </body>
         </html>
     `);
 });
 
+//PROXY ROUTE
 
+app.get("/proxy/:studyId", async (req, res) => {
+    try {
+        const studyId = Number(req.params.studyId);
+
+        console.log("PROXY STUDY ID:", studyId);
+
+        const study = db.prepare(`
+            SELECT *
+            FROM studies
+            WHERE id = ?
+        `).get(studyId);
+
+        if (!study) {
+            return res.status(404).send("Study not found.");
+        }
+
+        console.log("Proxying:", study.target_url);
+
+        const response = await fetch(study.target_url);
+
+        if (!response.ok) {
+            return res.status(response.status).send(
+                `Could not load target website. Status: ${response.status}`
+            );
+        }
+
+        let html = await response.text();
+
+        const trackerUrl =
+            `https://sue-womens-held-signs.trycloudflare.com/tracker.js?uxStudyId=${studyId}`;
+
+        const trackerScript = `
+            <script src="${trackerUrl}"></script>
+        `;
+
+        if (html.includes("</head>")) {
+            html = html.replace(
+                "</head>",
+                `${trackerScript}</head>`
+            );
+        } else {
+            html = trackerScript + html;
+        }
+
+        res.send(html);
+
+    } catch (error) {
+        console.error("Proxy error:", error);
+
+        res.status(500).send(
+            "Could not load the target website."
+        );
+    }
+});
+
+app.get("/tracker.js", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "tracker.js")
+    );
+});
 
 //Create a study 
 app.post("/api/studies", (req, res) => {

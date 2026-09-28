@@ -1,12 +1,21 @@
-
-// STUDY ID
-
-const params = new URLSearchParams(
+const pageParams = new URLSearchParams(
     window.location.search
 );
 
+const currentScript =
+    document.currentScript;
+
+const scriptParams = currentScript
+    ? new URLSearchParams(
+        new URL(
+            currentScript.src
+        ).search
+    )
+    : null;
+
 let studyId =
-    params.get("uxStudyId") ||
+    pageParams.get("uxStudyId") ||
+    scriptParams?.get("uxStudyId") ||
     sessionStorage.getItem("uxStudyId");
 
 if (!studyId) {
@@ -17,6 +26,8 @@ if (!studyId) {
         studyId
     );
 }
+
+console.log("UX Tracker Study ID:", studyId);
 
 console.log("UX Tracker Study ID:", studyId);
 // SESSION
@@ -36,7 +47,7 @@ if (!sessionId) {
 
 console.log("UX Tracker Session:", sessionId);
 
-fetch("http://localhost:3000/api/sessions", {
+fetch("https://sue-womens-held-signs.trycloudflare.com/api/sessions", {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -66,7 +77,7 @@ function trackEvent(type, data = {}) {
 
     console.log("TRACKED EVENT:", event);
 
-    fetch("http://localhost:3000/api/events", {
+    fetch("https://sue-womens-held-signs.trycloudflare.com/api/events", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

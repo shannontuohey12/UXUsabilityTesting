@@ -41,3 +41,7 @@ I also added the beginnings of a participant frontend, showing the invitation to
 Next, I want to add login and validation for the researcher, and refine the heatmaps. I want to continue refining the researcher dashboard and ensure all data is clear. I also want to finish up the participant frontend and add tasks to each study. 
 
 ### Next Steps 
+automation less manual input stop using extension 
+full usability 
+then add login 
+
