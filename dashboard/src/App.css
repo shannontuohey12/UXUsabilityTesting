@@ -354,3 +354,87 @@ main {
     border-radius: 8px;
     cursor: pointer;
 }
+
+.task-results {
+    margin-top: 20px;
+}
+
+.task-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.task-info span {
+    color: #777;
+    font-size: 14px;
+}
+
+.task-stats {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.completed {
+    color: #16a34a;
+}
+
+.skipped {
+    color: #777;
+}
+
+.feedback-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.feedback-stat {
+    padding: 18px;
+    background: #f5f7ff;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.feedback-stat span {
+    display: block;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.feedback-stat strong {
+    font-size: 24px;
+}
+
+.feedback-comments {
+    margin-top: 30px;
+}
+
+.feedback-comment {
+    padding: 18px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.feedback-ratings {
+    display: flex;
+    gap: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.feedback-comment p {
+    line-height: 1.5;
+    color: #555;
+}

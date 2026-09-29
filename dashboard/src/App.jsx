@@ -71,12 +71,7 @@ function App() {
                 }
             ]);
 
-            // Generate participant link
-            const link =
-                `http://localhost:3000/test/${newStudy.id}`;
-
-            setParticipantLink(link);
-
+        
             // Select the new study
             setStudyId(newStudy.id);
 
@@ -91,6 +86,33 @@ function App() {
             setCreatingStudy(false);
         }
     };
+
+const generateParticipantLink = async () => {
+    setParticipantLink("");
+
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/studies/${studyId}/participant-links`,
+            {
+                method: "POST"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to generate participant link");
+        }
+
+        const data = await response.json();
+
+        console.log("Participant link:", data.participantLink);
+
+        setParticipantLink(data.participantLink);
+
+    } catch (error) {
+        console.error(error);
+        setError("Could not generate participant link.");
+    }
+};
 
     useEffect(() => {
     fetch("http://localhost:3000/api/studies")
@@ -181,6 +203,13 @@ function App() {
                     </select>
 
                     <button
+                        className="participant-link-button"
+                        onClick={generateParticipantLink}
+                    >
+                        Generate Unique Participant Link
+                    </button>
+
+                    <button
                         className="create-study-button"
                         onClick={() => {
                             setShowCreateStudy(true);
@@ -252,38 +281,45 @@ function App() {
 
                         </form>
 
-                        {participantLink && (
-                            <div className="participant-link">
+                             
+                                
+                     </div>
 
-                                <h3>🎉 Study Created!</h3>
-
-                                <p>
-                                    Send this link to your participants:
-                                </p>
-
-                                <div className="link-box">
-                                    <input
-                                        type="text"
-                                        value={participantLink}
-                                        readOnly
-                                    />
-
-                                    <button
-                                        onClick={() =>
-                                            navigator.clipboard.writeText(
-                                                participantLink
-                                            )
-                                        }
-                                    >
-                                        Copy
-                                    </button>
-                                </div>
-
-                            </div>
                         )}
 
-                    </div>
-                )}
+    {participantLink && (
+        <div className="participant-link-card">
+
+            <h3>🔗 Participant Link</h3>
+
+            <p>
+                Send this link to a participant for this study:
+            </p>
+
+            <div className="link-box">
+
+                <input
+                    type="text"
+                    value={participantLink}
+                    readOnly
+                />
+
+                <button
+                    onClick={() =>
+                        navigator.clipboard.writeText(
+                            participantLink
+                        )
+                    }
+                >
+                    Copy
+                </button>
+
+            </div>
+
+        </div>
+    )}
+
+                    
 
             </header>
 
@@ -416,7 +452,183 @@ function App() {
 
                 </section>
 
+                { /*
+                    TASK RESULTS
+                 */}
+                <section className="analytics-card">
 
+                    <h2>Task Results</h2>
+
+                    <p className="card-description">
+                        How participants performed on each task
+                    </p>
+
+                    <div className="task-results">
+
+                        {analytics.taskResults.length === 0 ? (
+
+                            <p>
+                                No task results available yet.
+                            </p>
+
+                        ) : (
+
+                            analytics.taskResults.map((task) => {
+
+                                const total =
+                                    task.completed + task.skipped;
+
+                                const completionRate =
+                                    total > 0
+                                        ? Math.round(
+                                            (task.completed / total) * 100
+                                        )
+                                        : 0;
+
+                                return (
+                                    <div
+                                        className="task-result-row"
+                                        key={task.taskId}
+                                    >
+
+                                        <div className="task-info">
+
+                                            <strong>
+                                                Task {task.taskId}
+                                            </strong>
+
+                                            <span>
+                                                {task.taskTitle}
+                                            </span>
+
+                                        </div>
+
+                                        <div className="task-stats">
+
+                                            <span className="completed">
+                                                ✓ {task.completed} completed
+                                            </span>
+
+                                            <span className="skipped">
+                                                {task.skipped} skipped
+                                            </span>
+
+                                            <strong>
+                                                {completionRate}%
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+                                );
+                            })
+
+                        )}
+
+                    </div>
+
+                </section>
+
+                {/* 
+                    PARTICIPANT FEEDBACK 
+                */}
+
+                <section className="analytics-card">
+
+                    <h2>Participant Feedback</h2>
+
+                    <p className="card-description">
+                        Feedback collected after the usability test
+                    </p>
+
+                    <div className="feedback-summary">
+
+                        <div className="feedback-stat">
+                            <span>Responses</span>
+                            <strong>
+                                {analytics.feedbackSummary.responses}
+                            </strong>
+                        </div>
+
+                        <div className="feedback-stat">
+                            <span>Website Ease</span>
+                            <strong>
+                                {analytics.feedbackSummary.averageEaseOfUse || "—"}
+                                / 5
+                            </strong>
+                        </div>
+
+                        <div className="feedback-stat">
+                            <span>Task Ease</span>
+                            <strong>
+                                {analytics.feedbackSummary.averageTaskEase || "—"}
+                                / 5
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div className="feedback-comments">
+
+                        <h3>Participant Comments</h3>
+
+                        {analytics.feedbackComments.length === 0 ? (
+
+                            <p>
+                                No written feedback yet.
+                            </p>
+
+                        ) : (
+
+                            analytics.feedbackComments.map(
+                                (feedback, index) => (
+
+                                    <div
+                                        className="feedback-comment"
+                                        key={index}
+                                    >
+
+                                        <div className="feedback-ratings">
+
+                                            <span>
+                                                Website: {feedback.easeOfUse}/5
+                                            </span>
+
+                                            <span>
+                                                Tasks: {feedback.taskEase}/5
+                                            </span>
+
+                                        </div>
+
+                                        {feedback.confusing && (
+                                            <p>
+                                                <strong>
+                                                    Difficulties:
+                                                </strong>{" "}
+                                                {feedback.confusing}
+                                            </p>
+                                        )}
+
+                                        {feedback.additionalFeedback && (
+                                            <p>
+                                                <strong>
+                                                    Additional feedback:
+                                                </strong>{" "}
+                                                {feedback.additionalFeedback}
+                                            </p>
+                                        )}
+
+                                    </div>
+
+                                )
+                            )
+
+                        )}
+
+                    </div>
+
+                </section>
                 {/* 
                     MOST CLICKED ELEMENTS
                  */}

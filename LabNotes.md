@@ -40,8 +40,20 @@ I also added the beginnings of a participant frontend, showing the invitation to
 
 Next, I want to add login and validation for the researcher, and refine the heatmaps. I want to continue refining the researcher dashboard and ensure all data is clear. I also want to finish up the participant frontend and add tasks to each study. 
 
+### Progress Update 9/26
+I implemented a proxy system that allows the platform to load an external website through the usability testing platform. When a participant accesses their unique testing link, the platform retrieves the study’s target website and serves it through the proxy. The proxy also injects the tracking script into the website, allowing participant interactions such as clicks, page views, and scrolling to be recorded automatically. This replaces the need for the previous Chrome extension approach and creates a more seamless testing experience for participants.
+
+Currently I am using Cloudflare Tunnel to host my locally hosted Express backend on the internet during development. This allows participants to access the testing platform and allows the injected tracking script to communicate with my backend, even though the server is running locally. Eventually I want to host my project on the servers at New Paltz as Cloudflare is for temporary use. 
+
+I also added a participant task popup that appears directly on the testing website, providing instructions during the usability test. This was also done by injecting the popup code into the proxy. 
+
+In the researcher dashboard, I added the feature where participant links could be generated for individual studies. Each link is assigned a unique token to identify the study and participant session. This allows researchers to distribute study-specific testing links without requiring participants to install a browser extension.
+
+Lastly I also added a feedback form for participants after finishing the usability test. The feedback, along with task completion rates, are stored and connected to the participant's study and session. I added this data into the researcher dashboard so researchers could easily view user pain points and other feedback. 
+
+
 ### Next Steps 
-automation less manual input stop using extension 
-full usability 
-then add login 
+Adding login and validation?
+Making tasks dynamic - when researcher creates a new study they can put in tasks for participant to complete 
+
 

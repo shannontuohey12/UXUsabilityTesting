@@ -38,6 +38,30 @@ db.exec(`
     )
 `);
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS participant_links (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        study_id INTEGER NOT NULL,
+        token TEXT NOT NULL UNIQUE,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (study_id) REFERENCES studies(id)
+    )
+`);
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS feedback (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        study_id INTEGER NOT NULL,
+        session_id TEXT NOT NULL,
+        ease_of_use INTEGER,
+        task_ease INTEGER,
+        confusing TEXT,
+        additional_feedback TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (study_id) REFERENCES studies(id)
+    )
+`);
+
 //adding study_id column to events table if it doesn't exist
 try {
     db.exec(`
