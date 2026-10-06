@@ -12,6 +12,25 @@ db.exec(`
     )
 `);
 
+// Add researcher_id to studies if it doesn't exist
+
+try {
+
+    db.exec(`
+        ALTER TABLE studies
+        ADD COLUMN researcher_id INTEGER
+    `);
+
+    console.log("Added researcher_id to studies table.");
+
+} catch (error) {
+
+    if (!error.message.includes("duplicate column name")) {
+        throw error;
+    }
+
+}
+
 // Create sessions table
 db.exec(`
     CREATE TABLE IF NOT EXISTS sessions (
@@ -37,7 +56,7 @@ db.exec(`
         FOREIGN KEY (study_id) REFERENCES studies(id)
     )
 `);
-
+// Create participant_links table
 db.exec(`
     CREATE TABLE IF NOT EXISTS participant_links (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +66,7 @@ db.exec(`
         FOREIGN KEY (study_id) REFERENCES studies(id)
     )
 `);
-
+// Create feedback table
 db.exec(`
     CREATE TABLE IF NOT EXISTS feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,6 +78,27 @@ db.exec(`
         additional_feedback TEXT,
         created_at TEXT NOT NULL,
         FOREIGN KEY (study_id) REFERENCES studies(id)
+    )
+`);
+// Create researchers table
+db.exec(`
+    CREATE TABLE IF NOT EXISTS researchers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+`);
+
+//create researcher sessions table
+db.exec(`
+    CREATE TABLE IF NOT EXISTS researcher_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        researcher_id INTEGER NOT NULL,
+        session_token TEXT NOT NULL UNIQUE,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (researcher_id)
+            REFERENCES researchers(id)
     )
 `);
 

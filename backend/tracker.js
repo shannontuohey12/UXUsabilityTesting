@@ -19,6 +19,10 @@
     const currentScript =
         document.currentScript;
 
+    const backendUrl = currentScript
+        ? new URL(currentScript.src).origin
+        : window.location.origin;
+
     const scriptParams = currentScript
         ? new URLSearchParams(
             new URL(
@@ -75,7 +79,7 @@
     // ------------------------------------------------
 
     fetch(
-        "https://teachers-cincinnati-tcp-academy.trycloudflare.com/api/sessions",
+        `${backendUrl}/api/sessions`,
         {
             method: "POST",
             headers: {
@@ -147,7 +151,7 @@
         );
 
         fetch(
-            "https://teachers-cincinnati-tcp-academy.trycloudflare.com/api/events",
+            `${backendUrl}/api/events`,
             {
                 method: "POST",
 

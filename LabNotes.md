@@ -54,6 +54,7 @@ Lastly I also added a feedback form for participants after finishing the usabili
 
 ### Next Steps 
 Adding login and validation?
+Cleanup 
 Making tasks dynamic - when researcher creates a new study they can put in tasks for participant to complete 
 
 

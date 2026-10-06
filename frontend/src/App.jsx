@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Login from "./Login";
 
 import {
     LineChart,
@@ -15,6 +16,8 @@ import {
 import "./App.css";
 
 function App() {
+    const token = localStorage.getItem("sessionToken");
+    const [isLoggedIn, setIsLoggedIn] = useState(Boolean(token));
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -42,7 +45,8 @@ function App() {
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
                     },
                     body: JSON.stringify({
                         name: newStudyName,
@@ -56,7 +60,7 @@ function App() {
             }
 
             const data = await response.json();
-
+            localStorage.setItem("sessionToken", data.sessionToken);
             console.log("Study created:", data);
 
             const newStudy = data.study;
@@ -94,7 +98,10 @@ const generateParticipantLink = async () => {
         const response = await fetch(
             `http://localhost:3000/api/studies/${studyId}/participant-links`,
             {
-                method: "POST"
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             }
         );
 
@@ -103,6 +110,7 @@ const generateParticipantLink = async () => {
         }
 
         const data = await response.json();
+        localStorage.setItem("sessionToken", data.sessionToken);
 
         console.log("Participant link:", data.participantLink);
 
@@ -113,9 +121,14 @@ const generateParticipantLink = async () => {
         setError("Could not generate participant link.");
     }
 };
-
+    
     useEffect(() => {
-    fetch("http://localhost:3000/api/studies")
+
+        fetch("http://localhost:3000/api/studies", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         .then((response) => {
             if (!response.ok) {
                 throw new Error("Failed to fetch studies");
@@ -132,9 +145,17 @@ const generateParticipantLink = async () => {
         });
 }, []);
 
+
     useEffect(() => {
+    if (!isLoggedIn) return;
+
         fetch(
-            `http://localhost:3000/api/studies/${studyId}/analytics`
+            `http://localhost:3000/api/studies/${studyId}/analytics`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
         )
             .then((response) => {
                 if (!response.ok) {
@@ -152,7 +173,15 @@ const generateParticipantLink = async () => {
                 setError("Could not load study analytics.");
                 setLoading(false);
             });
-    }, [studyId]);
+    }, [studyId, isLoggedIn]);
+
+    if (!isLoggedIn) {
+    return (
+        <Login
+            onLogin={() => setIsLoggedIn(true)}
+        />
+    );
+}
 
     if (loading) {
         return (
