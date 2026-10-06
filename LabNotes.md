@@ -63,4 +63,7 @@ Views contains `feedbackPage.js` and `taskOverlay.js` which are lengthy files of
 
 Besides refactoring, I also adding login functionality this week. I added a basic login page and validation in the `auth.js` file. I added `requireAuth` to the appropriate routes in the `analytics.js` file. 
 
+### Next Steps 
+Since the next meeting is the presentations, I want to continue improving the frontend and adding some styles to make it more my own rather than just the React components. I also want to ensure that all functionality is working (like the screenshots). I want to add a "create account" option on the frontend so I do not need to use the backend to do this. I also want to organize the App.jsx and refactor that because it is also getting lengthy. 
 
+I also will be making my presentation for the midterm.
