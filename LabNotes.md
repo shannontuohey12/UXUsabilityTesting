@@ -52,9 +52,15 @@ In the researcher dashboard, I added the feature where participant links could b
 Lastly I also added a feedback form for participants after finishing the usability test. The feedback, along with task completion rates, are stored and connected to the participant's study and session. I added this data into the researcher dashboard so researchers could easily view user pain points and other feedback. 
 
 
-### Next Steps 
-Adding login and validation?
-Cleanup 
-Making tasks dynamic - when researcher creates a new study they can put in tasks for participant to complete 
+### Progress update 10/6 
+This week I focused on cleanup and refactoring as my server.js file was getting overloaded. I decided to split server.js into three folders -- routes, services, and views. 
+
+Routes contains all of my routes, currently including `analytics.js` (for counting and aggregating data of events), `auth.js` (for handling the authentication routes for login), `events.js` (for recieving and storing events), `feedback.js` (for recieving and storing feedback), `participants.js` (for creating a participant link and rerouting to proxy), `proxy.js` (for copying the HTML of a URL and injecting my tracking script), and `studies.js` (for handling study routes). 
+
+Services currently contains the file `screenshotService.js` which uses playwright to capture a screenshot of a URL and save it to the screenshots folder. 
+
+Views contains `feedbackPage.js` and `taskOverlay.js` which are lengthy files of HTML and CSS styling as well as some JavaScript logic regarding the feedback page and the overlay on the proxy of a URL. 
+
+Besides refactoring, I also adding login functionality this week. I added a basic login page and validation in the `auth.js` file. I added `requireAuth` to the appropriate routes in the `analytics.js` file. 
 
 

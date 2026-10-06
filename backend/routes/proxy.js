@@ -24,7 +24,7 @@ router.get("/:studyId", async (req, res) => {
             return res.status(404).send("Study not found.");
         }
 
-        // Get the URL we should load
+        // Get the URL to load
         const requestedUrl =
             req.query.url || study.target_url;
 
@@ -38,7 +38,7 @@ router.get("/:studyId", async (req, res) => {
             );
         }
 
-        let html = await response.text();
+        let html = await response.text(); // Get the HTML content of the target website, loads into server as text 
 
         // ------------------------------------------------
         // REWRITE LINKS
@@ -102,7 +102,8 @@ router.get("/:studyId", async (req, res) => {
             <script src="${trackerUrl}"></script>
         `;
 
-        const participantOverlay = createTaskOverlay([]);
+        const participantOverlay = createTaskOverlay([]); // Inject the task overlay with an empty task list
+        // add tasks later ^^ 
         
         if (html.includes("</head>")) {
             html = html.replace(

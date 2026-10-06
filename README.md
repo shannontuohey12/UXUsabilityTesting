@@ -67,3 +67,17 @@ The backend will be responsible for:
 ### Entity Relationship Diagram (ERD)
 ![Entity Relationship Diagram](images/UXApp.jpeg)
 
+### Stack
+| Layer                 | Technology                                  |
+| --------------------- | ------------------------------------------- |
+| Researcher Frontend   | React + Vite                                |
+| Participant Interface | HTML/CSS/JavaScript + injected task overlay |
+| Backend               | Node.js + Express.js                        |
+| API                   | REST API                                    |
+| Proxy                 | Node.js / Express + `fetch()`               |
+| Tracking              | Custom `tracker.js`                         |
+| Database              | SQLite                                      |
+| Database Library      | better-sqlite3                              |
+| Authentication        | bcrypt + session tokens                     |
+| Analytics             | Node.js/Express + React/Recharts            |
+| Development           | VS Code, GitHub                             |
