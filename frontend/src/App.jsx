@@ -29,6 +29,17 @@ function App() {
     const [participantLink, setParticipantLink] = useState("");
     const [creatingStudy, setCreatingStudy] = useState(false);
 
+    const handleLogout = () => {
+        localStorage.removeItem("sessionToken");
+
+        setIsLoggedIn(false);
+        setAnalytics(null);
+        setStudies([]);
+        setParticipantLink("");
+        setError("");
+        setLoading(true);
+    };
+
     const createStudy = async (event) => {
         event.preventDefault();
 
@@ -60,7 +71,6 @@ function App() {
             }
 
             const data = await response.json();
-            localStorage.setItem("sessionToken", data.sessionToken);
             console.log("Study created:", data);
 
             const newStudy = data.study;
@@ -110,7 +120,6 @@ const generateParticipantLink = async () => {
         }
 
         const data = await response.json();
-        localStorage.setItem("sessionToken", data.sessionToken);
 
         console.log("Participant link:", data.participantLink);
 
@@ -123,37 +132,48 @@ const generateParticipantLink = async () => {
 };
     
     useEffect(() => {
+        if (!isLoggedIn) return;
+
+        const currentToken = localStorage.getItem("sessionToken");
 
         fetch("http://localhost:3000/api/studies", {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${currentToken}`
             }
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch studies");
-            }
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch studies");
+                }
 
-            return response.json();
-        })
-        .then((data) => {
-            setStudies(data);
-        })
-        .catch((error) => {
-            console.error(error);
-            setError("Could not load studies.");
-        });
-}, []);
+                return response.json();
+            })
+            .then((data) => {
+                setStudies(data);
+
+                // Make sure we have a valid study selected
+                if (data.length > 0) {
+                    setStudyId(data[0].id);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                setError("Could not load studies.");
+            });
+
+    }, [isLoggedIn]);
 
 
     useEffect(() => {
-    if (!isLoggedIn) return;
+        if (!isLoggedIn) return;
+
+        const currentToken = localStorage.getItem("sessionToken");
 
         fetch(
             `http://localhost:3000/api/studies/${studyId}/analytics`,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${currentToken}`
                 }
             }
         )
@@ -173,6 +193,7 @@ const generateParticipantLink = async () => {
                 setError("Could not load study analytics.");
                 setLoading(false);
             });
+
     }, [studyId, isLoggedIn]);
 
     if (!isLoggedIn) {
@@ -212,7 +233,7 @@ const generateParticipantLink = async () => {
                 </div>
 
                 <div className="study-controls">
-
+                    
                     <select
                         value={studyId}
                         onChange={(event) => {
@@ -231,6 +252,9 @@ const generateParticipantLink = async () => {
                         ))}
                     </select>
 
+                    <button onClick={handleLogout}>
+                        Log Out
+                    </button>
                     <button
                         className="participant-link-button"
                         onClick={generateParticipantLink}

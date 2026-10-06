@@ -3,7 +3,7 @@ const db = require("./database");
 
 async function createResearcher() {
 
-    const email = "researcher@example.com";
+    const email = "shannon@example.com";
     const password = "password123";
 
     const passwordHash =
