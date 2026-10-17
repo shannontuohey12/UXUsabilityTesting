@@ -67,3 +67,9 @@ Besides refactoring, I also adding login functionality this week. I added a basi
 Since the next meeting is the presentations, I want to continue improving the frontend and adding some styles to make it more my own rather than just the React components. I also want to ensure that all functionality is working (like the screenshots). I want to add a "create account" option on the frontend so I do not need to use the backend to do this. I also want to organize the App.jsx and refactor that because it is also getting lengthy. 
 
 I also will be making my presentation for the midterm.
+
+One feauture - use psudeocode and diagrams, min of 5 mins explaining
+5 mins overall 
+5mins in depth on feature or more than one feature what makes it unique . proxy tracker script 
+10-12 mins
+questions for 3-4 mins

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Login({ onLogin }) {
+function Login({ onLogin, onCreateAccount }) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -115,7 +115,15 @@ function Login({ onLogin }) {
                         {loading ? "Logging in..." : "Log In"}
                     </button>
 
+
                 </form>
+
+                <p className="auth-switch">
+                Don't have an account?{" "}
+                <button type="button" onClick={onCreateAccount}>
+                    Create account
+                </button>
+            </p>
 
             </div>
 

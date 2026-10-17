@@ -102,8 +102,14 @@ router.get("/:studyId", async (req, res) => {
             <script src="${trackerUrl}"></script>
         `;
 
-        const participantOverlay = createTaskOverlay([]); // Inject the task overlay with an empty task list
-        // add tasks later ^^ 
+        const tasks = db.prepare(`
+            SELECT id, title, instructions, position
+            FROM study_tasks
+            WHERE study_id = ?
+            ORDER BY position ASC
+        `).all(studyId);
+
+        const participantOverlay = createTaskOverlay(tasks);       
         
         if (html.includes("</head>")) {
             html = html.replace(

@@ -113,12 +113,12 @@ function createTaskOverlay(tasks = []) {
                         class="ux-task"
                         data-task-index="${index}"
                     >
-                        <strong>
-                            Task ${index + 1}
+                       <strong>
+                            ${task.title || `Task ${index + 1}`}
                         </strong>
 
                         <p>
-                            ${task.description || task}
+                            ${task.instructions || task.description || ""}
                         </p>
 
                         <button

@@ -116,6 +116,19 @@ try {
     }
 }
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS study_tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        study_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        instructions TEXT NOT NULL,
+        position INTEGER NOT NULL,
+        FOREIGN KEY (study_id) REFERENCES studies(id)
+            ON DELETE CASCADE
+    )
+`);
+
+
 console.log("Database connected.");
 
 

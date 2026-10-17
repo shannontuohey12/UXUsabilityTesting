@@ -1,5 +1,6 @@
 const { chromium } = require("playwright");
 const fs = require("fs");
+const path = require("path");
 
 async function captureWebsiteScreenshot(studyId, targetUrl) {
     let browser;
@@ -30,11 +31,15 @@ async function captureWebsiteScreenshot(studyId, targetUrl) {
         // Give the website time to render
         await page.waitForTimeout(5000);
 
+        console.log("Finished initial wait.");
+
         await page.evaluate(() => {
             document.querySelectorAll("img").forEach(img => {
                 img.loading = "eager";
             });
         });
+
+        console.log("Starting page scroll...");
 
         // Scroll through the page slowly to trigger
         // lazy-loaded content and scroll animations.
@@ -105,10 +110,12 @@ async function captureWebsiteScreenshot(studyId, targetUrl) {
 
         console.log("PAGE HEIGHT:", pageHeight);
 
-        const screenshotDirectory = path.join(
+        const screenshotDirectory = path.resolve(
             __dirname,
+            "..",
             "screenshots"
         );
+        console.log("Screenshot directory:", screenshotDirectory);
 
         if (!fs.existsSync(screenshotDirectory)) {
             fs.mkdirSync(screenshotDirectory, {
