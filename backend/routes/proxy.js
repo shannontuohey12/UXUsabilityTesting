@@ -30,19 +30,18 @@ router.get("/:studyId", async (req, res) => {
 
         console.log("Proxying:", requestedUrl);
 
-        const response = await fetch(requestedUrl);
+        // Fetches the original website by sending a request to the target URL and getting the response back
+        const response = await fetch(requestedUrl); 
 
         if (!response.ok) {
             return res.status(response.status).send(
                 `Could not load target website. Status: ${response.status}`
             );
         }
+        //Reads response body as text and stores it in a variable called html. This is the HTML content of the target website that will be modified and sent back to the participant.
+        let html = await response.text(); 
 
-        let html = await response.text(); // Get the HTML content of the target website, loads into server as text 
-
-        // ------------------------------------------------
         // REWRITE LINKS
-        // ------------------------------------------------
 
         const targetOrigin =
             new URL(study.target_url).origin;
@@ -109,7 +108,7 @@ router.get("/:studyId", async (req, res) => {
             ORDER BY position ASC
         `).all(studyId);
 
-        const participantOverlay = createTaskOverlay(tasks);       
+        const participantOverlay = createTaskOverlay(tasks, studyId);       
         
         if (html.includes("</head>")) {
             html = html.replace(
@@ -123,7 +122,8 @@ router.get("/:studyId", async (req, res) => {
             `${participantOverlay}</body>`
         );
 
-        res.send(html);
+        //sends modified HTML back to the participant's browser, which will render the target website with the injected tracker and task overlay.
+        res.send(html); 
 
     } catch (error) {
 

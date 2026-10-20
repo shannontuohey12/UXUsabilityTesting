@@ -431,7 +431,7 @@ function App() {
                 </main>
 
                 {showCreateStudy && (
-                    <div className="create-study-card">
+                    <section className="create-study-card">
                         <div className="create-study-header">
                             <div>
                                 <h2>Create New Study</h2>
@@ -450,9 +450,10 @@ function App() {
                             <label htmlFor="study-name">Study Name</label>
                             <input
                                 id="study-name"
+                                type="text"
+                                placeholder="Portfolio Usability Test"
                                 value={newStudyName}
                                 onChange={(event) => setNewStudyName(event.target.value)}
-                                placeholder="Portfolio Usability Test"
                                 required
                             />
 
@@ -460,23 +461,104 @@ function App() {
                             <input
                                 id="study-url"
                                 type="url"
+                                placeholder="https://example.com"
                                 value={newStudyUrl}
                                 onChange={(event) => setNewStudyUrl(event.target.value)}
-                                placeholder="https://example.com"
                                 required
                             />
 
-                            
+                            <div className="study-tasks-builder">
+                                <h3>Usability Tasks</h3>
+
+                                <p>
+                                    Define the tasks participants should complete on your website.
+                                </p>
+
+                                {newStudyTasks.map((task, index) => (
+                                    <div className="study-task-card" key={index}>
+                                        <div className="study-task-heading">
+                                            <h4>Task {index + 1}</h4>
+
+                                            <div className="study-task-actions">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => moveStudyTask(index, -1)}
+                                                    disabled={index === 0}
+                                                    aria-label={`Move task ${index + 1} up`}
+                                                >
+                                                    ↑
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => moveStudyTask(index, 1)}
+                                                    disabled={index === newStudyTasks.length - 1}
+                                                    aria-label={`Move task ${index + 1} down`}
+                                                >
+                                                    ↓
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeStudyTask(index)}
+                                                    disabled={newStudyTasks.length === 1}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <label htmlFor={`task-title-${index}`}>
+                                            Task Title
+                                        </label>
+
+                                        <input
+                                            id={`task-title-${index}`}
+                                            value={task.title}
+                                            onChange={(event) =>
+                                                updateStudyTask(index, "title", event.target.value)
+                                            }
+                                            placeholder="e.g. Find the contact page"
+                                            required
+                                        />
+
+                                        <label htmlFor={`task-instructions-${index}`}>
+                                            Instructions
+                                        </label>
+
+                                        <textarea
+                                            id={`task-instructions-${index}`}
+                                            value={task.instructions}
+                                            onChange={(event) =>
+                                                updateStudyTask(index, "instructions", event.target.value)
+                                            }
+                                            placeholder="Describe what the participant should try to do..."
+                                            required
+                                        />
+                                    </div>
+                                ))}
+
+                                <button
+                                    type="button"
+                                    onClick={addStudyTask}
+                                    className="add-study-task-button"
+                                >
+                                    + Add Task
+                                </button>
+                            </div>
+
+
                             <button
-                                className="create-study-submit"
                                 type="submit"
+                                className="create-study-submit"
                                 disabled={creatingStudy}
                             >
                                 {creatingStudy ? "Creating..." : "Create Study"}
                             </button>
                         </form>
-                    </div>
+                    </section>
                 )}
+
             </div>
         );
     }

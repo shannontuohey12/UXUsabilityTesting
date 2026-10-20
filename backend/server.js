@@ -21,6 +21,13 @@ app.use(
     )
 );
 
+app.use(
+    "/assets",
+    express.static(
+        path.join(__dirname, "../frontend/public")
+    )
+);
+
 const PORT = 3000;
 
 // Middleware
