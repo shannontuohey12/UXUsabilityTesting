@@ -181,32 +181,34 @@ router.get("/:id/analytics", requireAuth, (req, res) => {
             .sort((a, b) => b.clicks - a.clicks);
 
 
-    // Task results
-
-    const taskResults = db.prepare(`
-        SELECT
-            json_extract(data, '$.taskId') AS taskId,
-            json_extract(data, '$.taskTitle') AS taskTitle,
-            SUM(
-                CASE
-                    WHEN type = 'TASK_COMPLETED'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS completed,
-            SUM(
-                CASE
-                    WHEN type = 'TASK_SKIPPED'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS skipped
-        FROM events
-        WHERE study_id = ?
-        AND type IN ('TASK_COMPLETED', 'TASK_SKIPPED')
-        GROUP BY taskId, taskTitle
-        ORDER BY taskId
-    `).all(studyId);
+    
+ 
+  // Task results
+  const taskResults = db.prepare(`
+      SELECT
+          json_extract(data, '$.data.taskTitle') AS taskTitle,
+          json_extract(data, '$.data.taskInstructions') AS taskInstructions,
+          json_extract(data, '$.data.taskIndex') AS taskIndex,
+          SUM(
+              CASE
+                  WHEN json_extract(data, '$.data.status') = 'completed'
+                  THEN 1
+                  ELSE 0
+              END
+          ) AS completed,
+          SUM(
+              CASE
+                  WHEN json_extract(data, '$.data.status') = 'skipped'
+                  THEN 1
+                  ELSE 0
+              END
+          ) AS skipped
+      FROM events
+      WHERE study_id = ?
+        AND type = 'TASK_RESULT'
+      GROUP BY taskTitle, taskInstructions, taskIndex
+      ORDER BY taskIndex
+  `).all(studyId);
 
 
     // Feedback summary

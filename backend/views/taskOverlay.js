@@ -274,6 +274,51 @@ function createTaskOverlay(tasks = [], studyId) {
                 const studyId = ${JSON.stringify(studyId)};
                 let currentTask = 0;
                 let completedTasks = [];
+                async function recordTaskResult(task, status) {
+                    const sessionId = sessionStorage.getItem(
+                        "trackerSessionId_" + studyId
+                    );
+
+                    if (!studyId || !sessionId) {
+                        console.error("Cannot record task result: missing session details", {
+                            studyId,
+                            sessionId
+                        });
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch("/api/events", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                studyId: Number(studyId),
+                                sessionId,
+                                type: "TASK_RESULT",
+                                url: window.location.href,
+                                timestamp: new Date().toISOString(),
+                                data: {
+                                    taskTitle: task.title,
+                                    taskInstructions: task.instructions,
+                                    taskIndex: currentTask,
+                                    status
+                                }
+                            })
+                        });
+
+                        if (!response.ok) {
+                            console.error(
+                                "Failed to save task result:",
+                                response.status,
+                                await response.text()
+                            );
+                        }
+                    } catch (error) {
+                        console.error("Error recording task result:", error);
+                    }
+                }
 
                 const overlay = document.getElementById("ux-task-overlay");
                 const content = document.getElementById("ux-task-content");
@@ -373,13 +418,27 @@ function createTaskOverlay(tasks = [], studyId) {
                     \`;
 
                     document.getElementById("ux-complete-button")
-                        .addEventListener("click", function () {
+                        .addEventListener("click", async function () {
+                            const task = tasks[currentTask];
+
+                            this.disabled = true;
+
+                            await recordTaskResult(task, "completed");
+
                             completedTasks.push(currentTask);
                             nextTask();
                         });
 
                     document.getElementById("ux-skip-button")
-                        .addEventListener("click", nextTask);
+                        .addEventListener("click", async function () {
+                            const task = tasks[currentTask];
+
+                            this.disabled = true;
+
+                            await recordTaskResult(task, "skipped");
+
+                            nextTask();
+                        });
                 }
 
                 function nextTask() {
