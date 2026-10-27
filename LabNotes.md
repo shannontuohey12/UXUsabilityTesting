@@ -72,3 +72,5 @@ This week I first focused on fixing the issue I was having with the proxy going 
 I also researched how to add a functionality that I discussed in the midterm presentation-- having a multi-page heatmap. I decided that I am going to likely have to edit my screenshot functionaliy to take a screenshot of each page the users visit and have that be presented on the frontend. I was thinking it would be some type of carousel of the different heatmaps.
 
 I researched different accessibility additions to add as well. I can add a button to run an accessibility scan for results such as missing alt text, form fields without labels, or insufficient color contrast. I then would add an accessibility analytics dashboard that shows the data. I can also add accesibility preferences for participants where they can change the text side, contrast, reduce motion, etc, to give researchers feedback on different changes. 
+
+What should I add next? focus on improving what i currently have or add another feature like the forumn ?

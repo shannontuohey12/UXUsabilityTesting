@@ -91,7 +91,7 @@ router.get("/:studyId", async (req, res) => {
                 return match;
             }
         );
-        
+
         // REWRITE GOOGLE SITES NAVIGATION
         html = html.replace(
             /data-url=["']([^"']+)["']/gi,
@@ -100,7 +100,7 @@ router.get("/:studyId", async (req, res) => {
                     const absoluteUrl = new URL(
                         path,
                         requestedUrl
-                    );
+                    ); //produces an absolute URL based on the relative path and the requested URL. This ensures that the link is correctly resolved even if it's a relative link.
 
                     if (absoluteUrl.origin === targetOrigin) {
                         return `data-url="${proxyBase}?url=${encodeURIComponent(
