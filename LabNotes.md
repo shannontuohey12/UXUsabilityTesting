@@ -69,8 +69,13 @@ This week was focused on preparing for the midterm presentation. I was able to i
 ### Progress update 10/26
 This week I first focused on fixing the issue I was having with the proxy going to other tabs on the website. I realized that since I was using a google sites website for my test I was getting errors because it uses JavaScript to handle tab navigation. I was able to add this to my proxy script as well to handle this. 
 
-I also researched how to add a functionality that I discussed in the midterm presentation-- having a multi-page heatmap. I decided that I am going to likely have to edit my screenshot functionaliy to take a screenshot of each page the users visit and have that be presented on the frontend. I was thinking it would be some type of carousel of the different heatmaps.
+I also researched how to add a functionality that I discussed in the midterm presentation-- having a multi-page heatmap. I decided that I am going to likely have to edit my screenshot functionaliy to take a screenshot of each page the users visit and have that be presented on the frontend. I was thinking it would be some type of carousel of the different heatmaps. ** Will do for next week
 
 I researched different accessibility additions to add as well. I can add a button to run an accessibility scan for results such as missing alt text, form fields without labels, or insufficient color contrast. I then would add an accessibility analytics dashboard that shows the data. I can also add accesibility preferences for participants where they can change the text side, contrast, reduce motion, etc, to give researchers feedback on different changes. 
+Q: should i incorparate an existing accessibility checker or try to develop my own. (axe-core engine, open source accessibility library)
+https://www.audioeye.com/lp/ada-web-compliance/?kw=ada%20website%20compliance%20software&cpn=20557193444&utm_adgroup=ADA-Compliance-Solutions&utm_source=google&utm_medium=paidsearch&utm_campaign=Generic-Accessibility-Solutions-Demo-And-Trial-97F&utm_term=ada%20website%20compliance%20software&utm_content=ADA-Compliance-Solutions&hsa_acc=3628656526&hsa_cam=20557193444&hsa_grp=160382392984&hsa_ad=723025399912&hsa_src=g&hsa_tgt=kwd-920305299337&hsa_kw=ada%20website%20compliance%20software&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=20557193444&gclid=CjwKCAjwl4HXBhAjEiwAHlpWhPlkPYc0KydOP9nzFmRwBstzEIyzgmIEaLMGHLaeLtNyc3-Bocag9RoC2VUQAvD_BwE
+https://www.w3.org/WAI/WCAG22/quickref/?versions=2.1
+
+
 
 What should I add next? focus on improving what i currently have or add another feature like the forumn ?
