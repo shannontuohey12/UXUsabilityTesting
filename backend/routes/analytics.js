@@ -95,7 +95,7 @@ router.get("/:id/analytics", requireAuth, (req, res) => {
     // Get most clicked elements
 
     const clickEvents = db.prepare(`
-        SELECT data
+        SELECT data, url
         FROM events
         WHERE study_id = ?
         AND type = 'CLICK'
@@ -119,30 +119,24 @@ router.get("/:id/analytics", requireAuth, (req, res) => {
     `).all(studyId);
 
 
-    // Process click events
-
+   // Process click events
     clickEvents.forEach((event) => {
-
         try {
-
             const data = JSON.parse(event.data);
 
-
             // HEATMAP DATA
-
             if (
                 data.x !== undefined &&
                 data.y !== undefined
             ) {
                 heatmapData.push({
                     x: data.x,
-                    y: data.y
+                    y: data.y,
+                    url: event.url
                 });
             }
 
-
             // MOST CLICKED ELEMENTS
-
             let elementName = data.text?.trim();
 
             if (!elementName) {
@@ -161,17 +155,12 @@ router.get("/:id/analytics", requireAuth, (req, res) => {
                 (clickCounts[elementName] || 0) + 1;
 
         } catch (error) {
-
             console.error(
                 "Error parsing click event:",
                 error
             );
-
         }
-
     });
-
-
     const mostClickedElements =
         Object.entries(clickCounts)
             .map(([element, clicks]) => ({
@@ -237,6 +226,15 @@ router.get("/:id/analytics", requireAuth, (req, res) => {
         ORDER BY id DESC
     `).all(studyId);
 
+    // Get unique pages visited during the study
+
+    const pages = db.prepare(`
+        SELECT DISTINCT url
+        FROM events
+        WHERE study_id = ?
+        AND type = 'PAGE_VIEW'
+        ORDER BY url ASC
+    `).all(studyId);
 
     // Send analytics
 
@@ -261,6 +259,10 @@ router.get("/:id/analytics", requireAuth, (req, res) => {
             mostClickedElements,
 
         scrollDepth: scrollDepth,
+
+        pages: pages.map((page) => ({
+            url: page.url
+        })),
 
         heatmapData: heatmapData,
 

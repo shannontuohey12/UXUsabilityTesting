@@ -66,3 +66,9 @@ Besides refactoring, I also adding login functionality this week. I added a basi
 ### Progress update 10/20
 This week was focused on preparing for the midterm presentation. I was able to improve the frontend and create a brand identity for my project -- Rooted Insights. I was also able to add a "create account" page on the frontend to streamline account creation. I worked on organizing all of my progress into a slide presentation that I will use for the midterm. 
 
+### Progress update 10/26
+This week I first focused on fixing the issue I was having with the proxy going to other tabs on the website. I realized that since I was using a google sites website for my test I was getting errors because it uses JavaScript to handle tab navigation. I was able to add this to my proxy script as well to handle this. 
+
+I also researched how to add a functionality that I discussed in the midterm presentation-- having a multi-page heatmap. I decided that I am going to likely have to edit my screenshot functionaliy to take a screenshot of each page the users visit and have that be presented on the frontend. I was thinking it would be some type of carousel of the different heatmaps.
+
+I researched different accessibility additions to add as well. I can add a button to run an accessibility scan for results such as missing alt text, form fields without labels, or insufficient color contrast. I then would add an accessibility analytics dashboard that shows the data. I can also add accesibility preferences for participants where they can change the text side, contrast, reduce motion, etc, to give researchers feedback on different changes. 

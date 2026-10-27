@@ -28,6 +28,14 @@ router.get("/:studyId", async (req, res) => {
         const requestedUrl =
             req.query.url || study.target_url;
 
+        // Ensure the URL is absolute
+        const currentPageUrl = new URL(
+            requestedUrl,
+            study.target_url
+        ).href;
+        console.log("STUDY TARGET URL:", study.target_url);
+        console.log("REQUESTED URL:", requestedUrl);
+
         console.log("Proxying:", requestedUrl);
 
         // Fetches the original website by sending a request to the target URL and getting the response back
@@ -43,11 +51,8 @@ router.get("/:studyId", async (req, res) => {
 
         // REWRITE LINKS
 
-        const targetOrigin =
-            new URL(study.target_url).origin;
-
-        const proxyBase =
-            `/proxy/${studyId}`;
+        const targetOrigin = new URL(study.target_url).origin;
+        const proxyBase = `/proxy/${studyId}`;
 
         html = html.replace(
             /href=["']([^"']+)["']/gi,
@@ -64,18 +69,14 @@ router.get("/:studyId", async (req, res) => {
                 }
 
                 try {
-
-                    const absoluteUrl =
-                        new URL(
-                            href,
-                            requestedUrl
-                        );
+                    const absoluteUrl = new URL(
+                        href,
+                        currentPageUrl
+                    );
 
                     // Only proxy links belonging
                     // to the target website
-                    if (
-                        absoluteUrl.origin === targetOrigin
-                    ) {
+                    if (absoluteUrl.origin === targetOrigin) {
 
                         return `href="${proxyBase}?url=${encodeURIComponent(
                             absoluteUrl.href
@@ -83,6 +84,29 @@ router.get("/:studyId", async (req, res) => {
 
                     }
 
+                } catch (error) {
+                    // Leave invalid URLs alone
+                }
+
+                return match;
+            }
+        );
+        
+        // REWRITE GOOGLE SITES NAVIGATION
+        html = html.replace(
+            /data-url=["']([^"']+)["']/gi,
+            (match, path) => {
+                try {
+                    const absoluteUrl = new URL(
+                        path,
+                        requestedUrl
+                    );
+
+                    if (absoluteUrl.origin === targetOrigin) {
+                        return `data-url="${proxyBase}?url=${encodeURIComponent(
+                            absoluteUrl.href
+                        )}"`;
+                    }
                 } catch (error) {
                     // Leave invalid URLs alone
                 }
