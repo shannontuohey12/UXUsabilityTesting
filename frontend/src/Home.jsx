@@ -62,7 +62,7 @@ export default function Home({ onLogin, onCreateAccount }) {
     
     const dashboardRef = useRef(null);
 
-    const handleChartMouseMove = (e) => {
+    const handleChartMouseMove = (e) => { // for tilting of the graph card
         const card = dashboardRef.current;
         if (!card) return;
 
@@ -92,7 +92,7 @@ export default function Home({ onLogin, onCreateAccount }) {
         
     return (
         <div className="home-page" id="top">
-            {/* NAVIGATION */}
+            {/* NAVBAR */}
             <nav className="home-navbar">
                 <a className="home-brand" href="/" aria-label="Rooted Insights home">
                     <img src="/RootedInsights.svg" alt="Rooted Insights" />
