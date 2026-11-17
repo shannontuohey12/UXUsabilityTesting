@@ -1,133 +1,150 @@
+
 import { useState } from "react";
+import FlowerBackground from "./FlowerBackground";
+import "./Login.css";
+import Navbar from "./Navbar";
+
+const API_URL = "http://localhost:3000";
 
 function Login({ onLogin, onCreateAccount }) {
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (event) => {
-
         event.preventDefault();
 
         setError("");
         setLoading(true);
 
         try {
-
-            const response = await fetch(
-                "http://localhost:3000/api/auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
-                }
-            );
+            const response = await fetch(`${API_URL}/api/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            });
 
             const data = await response.json();
 
-            console.log("Login response:", data);
-            
             if (!response.ok) {
-                throw new Error(
-                    data.message || "Login failed."
-                );
+                throw new Error(data.message || "Login failed.");
             }
 
-            // Save the session token
-            localStorage.setItem(
-                "sessionToken",
-                data.sessionToken
-            );
+            localStorage.setItem("sessionToken", data.sessionToken);
 
-            // Tell App.jsx that login was successful
             onLogin();
 
         } catch (error) {
-
-            console.error(error);
-            setError(error.message);
+            console.error("Login error:", error);
+            setError(error.message || "Something went wrong. Please try again.");
 
         } finally {
-
             setLoading(false);
+        }
+    };
 
+    const handleNavigation = (page) => {
+        if (page === "create-account") {
+            onCreateAccount();
+        } else if (page === "login") {
+            // Already on the login page.
+            return;
+        } else if (page === "home") {
+            // Return to the homepage.
+            window.location.href = "/";
         }
     };
 
     return (
-        <div className="login-page">
+        <main className="auth-page">
 
-            <div className="login-card">
+            {/* NAVBAR */}
+            <Navbar
+                page="login"
+                onNavigate={handleNavigation}
+            />
 
-                <h1>UX Research Platform</h1>
+            {/* FLOWER BACKGROUND */}
+            <FlowerBackground />
 
-                <p>
-                    Researcher Login
-                </p>
+            {/* LOGIN FORM */}
+            <section className="auth-content">
+                <div className="auth-form-wrapper">
 
-                <form onSubmit={handleLogin}>
+                    <h1>Log In</h1>
 
-                    <label>
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(event) =>
-                            setEmail(event.target.value)
-                        }
-                        placeholder="researcher@example.com"
-                        required
-                    />
-
-                    <label>
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(event) =>
-                            setPassword(event.target.value)
-                        }
-                        placeholder="Password"
-                        required
-                    />
-
-                    {error && (
-                        <p className="login-error">
-                            {error}
-                        </p>
-                    )}
-
-                    <button
-                        type="submit"
-                        disabled={loading}
+                    <form
+                        onSubmit={handleLogin}
+                        className="auth-form"
                     >
-                        {loading ? "Logging in..." : "Log In"}
-                    </button>
+                        <div className="auth-field">
+                            <label htmlFor="login-email">
+                                Email
+                            </label>
 
+                            <input
+                                id="login-email"
+                                type="email"
+                                autoComplete="email"
+                                value={email}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
+                                placeholder="researcher@example.com"
+                                required
+                            />
+                        </div>
 
-                </form>
+                        <div className="auth-field">
+                            <label htmlFor="login-password">
+                                Password
+                            </label>
 
-                <p className="auth-switch">
-                Don't have an account?{" "}
-                <button type="button" onClick={onCreateAccount}>
-                    Create account
-                </button>
-            </p>
+                            <input
+                                id="login-password"
+                                type="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={(event) =>
+                                    setPassword(event.target.value)
+                                }
+                                placeholder="Enter your password"
+                                required
+                            />
+                        </div>
 
-            </div>
+                        {error && (
+                            <p className="auth-error" role="alert">
+                                {error}
+                            </p>
+                        )}
 
-        </div>
+                        <button
+                            type="submit"
+                            className="auth-submit"
+                            disabled={loading}
+                        >
+                            {loading ? "Logging in..." : "Log In"}
+                        </button>
+                    </form>
+
+                    <p className="auth-switch">
+                        Don't have an account?{" "}
+                        <button
+                            type="button"
+                            onClick={onCreateAccount}
+                        >
+                            Create account
+                        </button>
+                    </p>
+
+                </div>
+            </section>
+
+        </main>
     );
 }
 

@@ -1,15 +1,13 @@
-
 import { useEffect, useState } from "react";
 import Login from "./Login";
-import Navbar from "./Navbar"
+import Navbar from "./Navbar";
 import CreateAccount from "./CreateAccount";
 import Home from "./Home";
 
 import {
-    LineChart,
-    Line,
     BarChart,
     Bar,
+    Cell,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -18,8 +16,78 @@ import {
 } from "recharts";
 
 import "./App.css";
+import "./Dashboard.css";
 
 const API_URL = "http://localhost:3000";
+
+// Placeholder copy until each study has its own description.
+const PLACEHOLDER_DESCRIPTION =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu.";
+
+// Success / warning / fail pill shown on each task row.
+function getTaskStatus(rate) {
+    if (rate >= 90) return { label: "Successful", className: "success" };
+    if (rate >= 50) return { label: "Needs Improvement", className: "warning" };
+    return { label: "Fail", className: "fail" };
+}
+
+function formatCommentDate(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString("en-US", {
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+}
+
+function Footer({ onCreateStudy, onLogout }) {
+    return (
+        <footer className="site-footer">
+            <div className="footer-inner">
+                <div className="footer-brand">
+                    <img src="/RootedInsights.svg" alt="Rooted Insights" className="footer-logo" />
+                    <p>Grow your design skills and empower users.</p>
+                    <button
+                        type="button"
+                        className="back-to-top"
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                    >
+                        Back to Top ↑
+                    </button>
+                </div>
+
+                <nav className="footer-column" aria-label="Footer">
+                    <h4>Navigation</h4>
+                    <button type="button" onClick={onCreateStudy}>Create New Study</button>
+                    <button
+                        type="button"
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                    >
+                        Change Study
+                    </button>
+                    <button type="button" onClick={onLogout}>Log Out</button>
+                </nav>
+
+                <div className="footer-column">
+                    <h4>Have any feedback?</h4>
+                    <p>
+                        Please email{" "}
+                        <a href="mailto:shannontuohey12@gmail.com">
+                            shannontuohey12@gmail.com
+                        </a>{" "}
+                        if you encounter any issues or want to provide feedback on
+                        Rooted Insights.
+                    </p>
+                </div>
+            </div>
+
+            <p className="footer-copy">© 2026 Rooted Insights</p>
+        </footer>
+    );
+}
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(
@@ -40,11 +108,15 @@ function App() {
 
     const [participantLink, setParticipantLink] = useState("");
     const [generatingLink, setGeneratingLink] = useState(false);
-    
+
     const [authPage, setAuthPage] = useState("home");
     const [newStudyTasks, setNewStudyTasks] = useState([
-        { title: "", instructions: ""}
+        { title: "", instructions: "" }
     ]);
+
+    // Used for "Welcome, Shannon!". Save this at login/account creation:
+    // localStorage.setItem("userName", name)
+    const userName = localStorage.getItem("userName") || "";
 
     const getAuthHeaders = () => ({
         Authorization: `Bearer ${localStorage.getItem("sessionToken")}`
@@ -79,10 +151,9 @@ function App() {
 
         async function loadStudies() {
             try {
-                const response = await fetch(
-                    `${API_URL}/api/studies`,
-                    { headers: getAuthHeaders() }
-                );
+                const response = await fetch(`${API_URL}/api/studies`, {
+                    headers: getAuthHeaders()
+                });
 
                 if (response.status === 401) {
                     localStorage.removeItem("sessionToken");
@@ -108,7 +179,6 @@ function App() {
                     setStudyId(null);
                     setLoading(false);
                 }
-
             } catch (err) {
                 if (!cancelled) {
                     console.error(err);
@@ -186,17 +256,13 @@ function App() {
     const updateStudyTask = (index, field, value) => {
         setNewStudyTasks((current) =>
             current.map((task, i) =>
-                i === index
-                    ? { ...task, [field]: value }
-                    : task
+                i === index ? { ...task, [field]: value } : task
             )
         );
     };
 
     const removeStudyTask = (index) => {
-        setNewStudyTasks((current) =>
-            current.filter((_, i) => i !== index)
-        );
+        setNewStudyTasks((current) => current.filter((_, i) => i !== index));
     };
 
     const moveStudyTask = (index, direction) => {
@@ -229,9 +295,7 @@ function App() {
         }
 
         const invalidTask = newStudyTasks.some(
-            (task) =>
-                !task.title.trim() ||
-                !task.instructions.trim()
+            (task) => !task.title.trim() || !task.instructions.trim()
         );
 
         if (invalidTask) {
@@ -336,7 +400,171 @@ function App() {
         }
     };
 
-        
+    // ---------- Shared pieces (defined once, used in both views) ----------
+
+    const createStudyModal = showCreateStudy && (
+        <div
+            className="modal-backdrop"
+            onClick={(event) => {
+                if (event.target === event.currentTarget) setShowCreateStudy(false);
+            }}
+        >
+            <section
+                className="create-study-card"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="create-study-title"
+            >
+                <div className="create-study-header">
+                    <div>
+                        <h2 id="create-study-title">Create a New Study</h2>
+                        <p>Enter the website you want participants to test.</p>
+                    </div>
+                    <button
+                        type="button"
+                        className="close-button"
+                        onClick={() => setShowCreateStudy(false)}
+                        aria-label="Close form"
+                    >
+                        ×
+                    </button>
+                </div>
+
+                {error && (
+                    <div className="inline-error" role="alert">
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={createStudy}>
+                    <label htmlFor="study-name">Study Name</label>
+                    <input
+                        id="study-name"
+                        type="text"
+                        placeholder="Portfolio Usability Test"
+                        value={newStudyName}
+                        onChange={(event) => setNewStudyName(event.target.value)}
+                        required
+                    />
+
+                    <label htmlFor="study-url">Website URL</label>
+                    <input
+                        id="study-url"
+                        type="url"
+                        placeholder="https://example.com"
+                        value={newStudyUrl}
+                        onChange={(event) => setNewStudyUrl(event.target.value)}
+                        required
+                    />
+
+                    <div className="study-tasks-builder">
+                        <h3>Usability Tasks</h3>
+                        <p>
+                            Define the tasks participants should complete on your website.
+                        </p>
+
+                        {newStudyTasks.map((task, index) => (
+                            <div className="study-task-card" key={index}>
+                                <div className="study-task-heading">
+                                    <h4>Task {index + 1}</h4>
+
+                                    <div className="study-task-actions">
+                                        <button
+                                            type="button"
+                                            onClick={() => moveStudyTask(index, -1)}
+                                            disabled={index === 0}
+                                            aria-label={`Move task ${index + 1} up`}
+                                        >
+                                            ↑
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => moveStudyTask(index, 1)}
+                                            disabled={index === newStudyTasks.length - 1}
+                                            aria-label={`Move task ${index + 1} down`}
+                                        >
+                                            ↓
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeStudyTask(index)}
+                                            disabled={newStudyTasks.length === 1}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <label htmlFor={`task-title-${index}`}>Task Title</label>
+                                <input
+                                    id={`task-title-${index}`}
+                                    value={task.title}
+                                    onChange={(event) =>
+                                        updateStudyTask(index, "title", event.target.value)
+                                    }
+                                    placeholder="e.g. Find the about page"
+                                    required
+                                />
+
+                                <label htmlFor={`task-instructions-${index}`}>
+                                    Task {index + 1} Description
+                                </label>
+                                <textarea
+                                    id={`task-instructions-${index}`}
+                                    value={task.instructions}
+                                    onChange={(event) =>
+                                        updateStudyTask(index, "instructions", event.target.value)
+                                    }
+                                    placeholder="Click through to the about page..."
+                                    required
+                                />
+                            </div>
+                        ))}
+
+                        <button
+                            type="button"
+                            onClick={addStudyTask}
+                            className="add-study-task-button"
+                        >
+                            + Add Task
+                        </button>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="create-study-submit"
+                        disabled={creatingStudy}
+                    >
+                        {creatingStudy ? "Creating..." : "Create Study"}
+                    </button>
+                </form>
+            </section>
+        </div>
+    );
+
+    const handleNavigate = (page) => {
+        if (page === "new-study") {
+            setShowCreateStudy(true);
+            setParticipantLink("");
+        }
+    };
+
+    const handleStudyChange = (newStudyId) => {
+        setStudyId(newStudyId);
+        setAnalytics(null);
+        setParticipantLink("");
+        setLoading(true);
+    };
+
+    const footer = (
+        <Footer
+            onCreateStudy={() => setShowCreateStudy(true)}
+            onLogout={handleLogout}
+        />
+    );
+
+    // ---------- Logged-out screens ----------
+
     if (!isLoggedIn) {
         if (authPage === "home") {
             return (
@@ -349,28 +577,18 @@ function App() {
 
         if (authPage === "create-account") {
             return (
-                <div className="app-shell">
-                    <Navbar
-                        page="create-account"
-                        onNavigate={(page) => setAuthPage(page)}
-                    />
-                    <CreateAccount
-                        onLoginPage={() => setAuthPage("login")}
-                        onAccountCreated={() => {
-                            setAuthPage("login");
-                            handleLogin();
-                        }}
-                    />
-                </div>
+                <CreateAccount
+                    onLoginPage={() => setAuthPage("login")}
+                    onAccountCreated={() => {
+                        setAuthPage("login");
+                        handleLogin();
+                    }}
+                />
             );
         }
 
         return (
             <div className="app-shell">
-                <Navbar
-                    page="login"
-                    onNavigate={(page) => setAuthPage(page)}
-                />
                 <Login
                     onLogin={handleLogin}
                     onCreateAccount={() => setAuthPage("create-account")}
@@ -379,12 +597,11 @@ function App() {
         );
     }
 
-
     if (loading) {
         return <div className="loading">Loading dashboard...</div>;
     }
 
-    if (error && !analytics) {
+    if (error && !analytics && studies.length > 0) {
         return (
             <div className="error">
                 <p>{error}</p>
@@ -402,6 +619,8 @@ function App() {
         );
     }
 
+    // ---------- Welcome screen (no study loaded yet) ----------
+
     if (!analytics) {
         return (
             <div className="dashboard">
@@ -410,168 +629,55 @@ function App() {
                     onLogout={handleLogout}
                     studies={studies}
                     studyId={studyId}
-                    onStudyChange={(newStudyId) => {
-                        setStudyId(newStudyId);
-                        setAnalytics(null);
-                        setLoading(true);
-                    }}
+                    onStudyChange={handleStudyChange}
+                    onNavigate={handleNavigate}
                 />
 
-                <main className="dashboard-content">
-                    <h1>Welcome to Rooted Insights</h1>
-                    <p>Create a study to start collecting usability insights.</p>
-                    {studies.length === 0 && (
+                <main className="welcome">
+                    {/* Export these from Figma as SVGs into /public/flowers/ */}
+                    <img className="flower flower-teal" src="/flowers/teal.svg" alt="" aria-hidden="true" />
+                    <img className="flower flower-sand" src="/flowers/sand.svg" alt="" aria-hidden="true" />
+                    <img className="flower flower-mint" src="/flowers/mint.svg" alt="" aria-hidden="true" />
+                    <img className="flower flower-coral" src="/flowers/coral.svg" alt="" aria-hidden="true" />
+
+                    <div className="welcome-content">
+                        <h1>
+                            Welcome{userName ? `, ${userName}` : ""}!
+                        </h1>
+                        <p>
+                            {studies.length === 0
+                                ? "Every great insight starts with a question. Create your first usability study to start discovering how people experience your website."
+                                : "Select a study from the menu above, or create a new one to start collecting participant feedback."}
+                        </p>
                         <button
-                            className="create-study-button"
+                            className="primary-pill"
                             onClick={() => setShowCreateStudy(true)}
                         >
-                            Create Your First Study
+                            Create New Study
                         </button>
-                    )}
+                    </div>
                 </main>
 
-                {showCreateStudy && (
-                    <section className="create-study-card">
-                        <div className="create-study-header">
-                            <div>
-                                <h2>Create New Study</h2>
-                                <p>Enter the website you want participants to test.</p>
-                            </div>
-                            <button
-                                className="close-button"
-                                onClick={() => setShowCreateStudy(false)}
-                                aria-label="Close form"
-                            >
-                                ×
-                            </button>
-                        </div>
-
-                        <form onSubmit={createStudy}>
-                            <label htmlFor="study-name">Study Name</label>
-                            <input
-                                id="study-name"
-                                type="text"
-                                placeholder="Portfolio Usability Test"
-                                value={newStudyName}
-                                onChange={(event) => setNewStudyName(event.target.value)}
-                                required
-                            />
-
-                            <label htmlFor="study-url">Website URL</label>
-                            <input
-                                id="study-url"
-                                type="url"
-                                placeholder="https://example.com"
-                                value={newStudyUrl}
-                                onChange={(event) => setNewStudyUrl(event.target.value)}
-                                required
-                            />
-
-                            <div className="study-tasks-builder">
-                                <h3>Usability Tasks</h3>
-
-                                <p>
-                                    Define the tasks participants should complete on your website.
-                                </p>
-
-                                {newStudyTasks.map((task, index) => (
-                                    <div className="study-task-card" key={index}>
-                                        <div className="study-task-heading">
-                                            <h4>Task {index + 1}</h4>
-
-                                            <div className="study-task-actions">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => moveStudyTask(index, -1)}
-                                                    disabled={index === 0}
-                                                    aria-label={`Move task ${index + 1} up`}
-                                                >
-                                                    ↑
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => moveStudyTask(index, 1)}
-                                                    disabled={index === newStudyTasks.length - 1}
-                                                    aria-label={`Move task ${index + 1} down`}
-                                                >
-                                                    ↓
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeStudyTask(index)}
-                                                    disabled={newStudyTasks.length === 1}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <label htmlFor={`task-title-${index}`}>
-                                            Task Title
-                                        </label>
-
-                                        <input
-                                            id={`task-title-${index}`}
-                                            value={task.title}
-                                            onChange={(event) =>
-                                                updateStudyTask(index, "title", event.target.value)
-                                            }
-                                            placeholder="e.g. Find the contact page"
-                                            required
-                                        />
-
-                                        <label htmlFor={`task-instructions-${index}`}>
-                                            Instructions
-                                        </label>
-
-                                        <textarea
-                                            id={`task-instructions-${index}`}
-                                            value={task.instructions}
-                                            onChange={(event) =>
-                                                updateStudyTask(index, "instructions", event.target.value)
-                                            }
-                                            placeholder="Describe what the participant should try to do..."
-                                            required
-                                        />
-                                    </div>
-                                ))}
-
-                                <button
-                                    type="button"
-                                    onClick={addStudyTask}
-                                    className="add-study-task-button"
-                                >
-                                    + Add Task
-                                </button>
-                            </div>
-
-
-                            <button
-                                type="submit"
-                                className="create-study-submit"
-                                disabled={creatingStudy}
-                            >
-                                {creatingStudy ? "Creating..." : "Create Study"}
-                            </button>
-                        </form>
-                    </section>
-                )}
-
+                {createStudyModal}
+                {footer}
             </div>
         );
     }
 
+    // ---------- Dashboard ----------
+
+    const currentStudy = studies.find((study) => study.id === studyId);
+
     const studyName =
-        analytics.study?.name ||
-        studies.find((study) => study.id === studyId)?.name ||
-        "Usability Study";
+        analytics.study?.name || currentStudy?.name || "Usability Study";
+
+    const studyDescription =
+        analytics.study?.description || currentStudy?.description || "";
 
     const targetUrl =
         analytics.study?.targetUrl ||
         analytics.study?.target_url ||
-        studies.find((study) => study.id === studyId)?.target_url ||
+        currentStudy?.target_url ||
         "";
 
     const taskResults = analytics.taskResults || [];
@@ -589,226 +695,150 @@ function App() {
                 onLogout={handleLogout}
                 studies={studies}
                 studyId={studyId}
-                onStudyChange={(newStudyId) => {
-                    setStudyId(newStudyId);
-                    setAnalytics(null);
-                    setParticipantLink("");
-                }}
-                onNavigate={(page) => {
-                    if (page === "new-study") {
-                        setShowCreateStudy(true);
-                        setParticipantLink("");
-                    }
-                }}
+                onStudyChange={handleStudyChange}
+                onNavigate={handleNavigate}
             />
 
             <main className="dashboard-content">
                 {/* Page heading */}
                 <section className="page-header">
-                    <h1>UX Research Dashboard</h1>
-                    <p className="study-subtitle">{studyName}</p>
+                    <div className="page-header-text">
+                        <h1>{studyName}</h1>
 
-                    {targetUrl && (
-                        <div className="website-badge">
-                            <span>Target Website:</span>
-                            <a href={targetUrl} target="_blank" rel="noreferrer">
-                                {targetUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                            </a>
+                        {targetUrl && (
+                            <div className="website-badge">
+                                <span>Target Website:</span>
+                                <a href={targetUrl} target="_blank" rel="noreferrer">
+                                    {targetUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                                </a>
+                            </div>
+                        )}
+
+                        <p className="study-description">
+                            {studyDescription || PLACEHOLDER_DESCRIPTION}
+                        </p>
+
+                        <button
+                            className="primary-pill"
+                            onClick={generateParticipantLink}
+                            disabled={generatingLink || !studyId}
+                        >
+                            {generatingLink ? "Generating..." : "Share Unique Participant Link"}
+                        </button>
+
+                        {participantLink && (
+                            <div className="link-box">
+                                <input
+                                    aria-label="Participant link"
+                                    value={participantLink}
+                                    readOnly
+                                />
+                                <button onClick={copyParticipantLink}>Copy</button>
+                            </div>
+                        )}
+                    </div>
+
+                    {analytics.screenshotUrl && (
+                        <div className="header-screenshot">
+                            <img
+                                src={`${API_URL}${analytics.screenshotUrl}`}
+                                alt="Screenshot of the tested website"
+                            />
                         </div>
                     )}
                 </section>
 
-                {error && (
+                {error && !showCreateStudy && (
                     <div className="inline-error" role="alert">
                         {error}
                         <button onClick={() => setError("")}>Dismiss</button>
                     </div>
                 )}
 
-                {/* Create study form */}
-                {showCreateStudy && (
-                    <section className="create-study-card">
-                        <div className="create-study-header">
-                            <div>
-                                <h2>Create New Study</h2>
-                                <p>Enter the website you want participants to test.</p>
+                {/* Study stats + task results, side by side */}
+                <div className="stats-row">
+                    <section className="panel panel-filled stats-panel">
+                        <h2>Study Stats</h2>
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <p>{analytics.participants ?? 0}</p>
+                                <h3>participants</h3>
                             </div>
-                            <button
-                                className="close-button"
-                                onClick={() => setShowCreateStudy(false)}
-                                aria-label="Close form"
-                            >
-                                ×
-                            </button>
+                            <div className="stat-card">
+                                <p>{analytics.totalEvents ?? 0}</p>
+                                <h3>total events</h3>
+                            </div>
+                            <div className="stat-card">
+                                <p>{analytics.pageViews ?? 0}</p>
+                                <h3>page views</h3>
+                            </div>
+                            <div className="stat-card">
+                                <p>{analytics.clicks ?? 0}</p>
+                                <h3>clicks</h3>
+                            </div>
                         </div>
+                    </section>
 
-                        <form onSubmit={createStudy}>
-                            <label htmlFor="study-name">Study Name</label>
-                            <input
-                                id="study-name"
-                                type="text"
-                                placeholder="Portfolio Usability Test"
-                                value={newStudyName}
-                                onChange={(event) => setNewStudyName(event.target.value)}
-                                required
-                            />
+                    <section className="panel panel-outlined">
+                        <h2>Task Results</h2>
 
-                            <label htmlFor="study-url">Website URL</label>
-                            <input
-                                id="study-url"
-                                type="url"
-                                placeholder="https://example.com"
-                                value={newStudyUrl}
-                                onChange={(event) => setNewStudyUrl(event.target.value)}
-                                required
-                            />
+                        {taskResults.length === 0 ? (
+                            <p className="empty-state">No task results available yet.</p>
+                        ) : (
+                            <div className="task-results">
+                                {taskResults.map((task) => {
+                                    const completed = Number(task.completed) || 0;
+                                    const skipped = Number(task.skipped) || 0;
+                                    const total = completed + skipped;
+                                    const rate = total
+                                        ? Math.round((completed / total) * 100)
+                                        : 0;
+                                    const status = getTaskStatus(rate);
 
-                            <div className="study-tasks-builder">
-                                <h3>Usability Tasks</h3>
+                                    return (
+                                        <div className="task-result-row" key={task.taskId}>
+                                            <div className="task-result-top">
+                                                <strong>
+                                                    Task {task.taskId}: {task.taskTitle}
+                                                </strong>
+                                                <div className="task-status">
+                                                    <span className={`status-pill ${status.className}`}>
+                                                        {status.label}
+                                                    </span>
+                                                    <strong className={`task-rate ${status.className}`}>
+                                                        {rate}%
+                                                    </strong>
+                                                </div>
+                                            </div>
 
-                                <p>
-                                    Define the tasks participants should complete on your website.
-                                </p>
+                                            <div
+                                                className="progress"
+                                                role="progressbar"
+                                                aria-valuenow={rate}
+                                                aria-valuemin={0}
+                                                aria-valuemax={100}
+                                            >
+                                                <span
+                                                    className={status.className}
+                                                    style={{ width: `${rate}%` }}
+                                                />
+                                            </div>
 
-                                {newStudyTasks.map((task, index) => (
-                                    <div className="study-task-card" key={index}>
-                                        <div className="study-task-heading">
-                                            <h4>Task {index + 1}</h4>
-
-                                            <div className="study-task-actions">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => moveStudyTask(index, -1)}
-                                                    disabled={index === 0}
-                                                    aria-label={`Move task ${index + 1} up`}
-                                                >
-                                                    ↑
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => moveStudyTask(index, 1)}
-                                                    disabled={index === newStudyTasks.length - 1}
-                                                    aria-label={`Move task ${index + 1} down`}
-                                                >
-                                                    ↓
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeStudyTask(index)}
-                                                    disabled={newStudyTasks.length === 1}
-                                                >
-                                                    Remove
-                                                </button>
+                                            <div className="task-counts">
+                                                <span>{completed} Completed</span>
+                                                <span>{skipped} Skipped</span>
                                             </div>
                                         </div>
-
-                                        <label htmlFor={`task-title-${index}`}>
-                                            Task Title
-                                        </label>
-
-                                        <input
-                                            id={`task-title-${index}`}
-                                            value={task.title}
-                                            onChange={(event) =>
-                                                updateStudyTask(index, "title", event.target.value)
-                                            }
-                                            placeholder="e.g. Find the contact page"
-                                            required
-                                        />
-
-                                        <label htmlFor={`task-instructions-${index}`}>
-                                            Instructions
-                                        </label>
-
-                                        <textarea
-                                            id={`task-instructions-${index}`}
-                                            value={task.instructions}
-                                            onChange={(event) =>
-                                                updateStudyTask(index, "instructions", event.target.value)
-                                            }
-                                            placeholder="Describe what the participant should try to do..."
-                                            required
-                                        />
-                                    </div>
-                                ))}
-
-                                <button
-                                    type="button"
-                                    onClick={addStudyTask}
-                                    className="add-study-task-button"
-                                >
-                                    + Add Task
-                                </button>
+                                    );
+                                })}
                             </div>
-
-
-                            <button
-                                type="submit"
-                                className="create-study-submit"
-                                disabled={creatingStudy}
-                            >
-                                {creatingStudy ? "Creating..." : "Create Study"}
-                            </button>
-                        </form>
+                        )}
                     </section>
-                )}
+                </div>
 
-                {/* Participant link controls */}
-                <section className="participant-link-card">
-                    <div>
-                        <h3>Participant Link</h3>
-                        <p>Generate a unique link to share with a study participant.</p>
-                    </div>
-
-                    <button
-                        onClick={generateParticipantLink}
-                        disabled={generatingLink || !studyId}
-                    >
-                        {generatingLink ? "Generating..." : "Generate Link"}
-                    </button>
-
-                    {participantLink && (
-                        <div className="link-box">
-                            <input
-                                aria-label="Participant link"
-                                value={participantLink}
-                                readOnly
-                            />
-                            <button onClick={copyParticipantLink}>Copy</button>
-                        </div>
-                    )}
-                </section>
-
-                {/* Summary metrics */}
-                <section className="stats-grid">
-                    <div className="stat-card">
-                        <h3>Participants</h3>
-                        <p>{analytics.participants ?? 0}</p>
-                    </div>
-                    <div className="stat-card">
-                        <h3>Total Events</h3>
-                        <p>{analytics.totalEvents ?? 0}</p>
-                    </div>
-                    <div className="stat-card">
-                        <h3>Page Views</h3>
-                        <p>{analytics.pageViews ?? 0}</p>
-                    </div>
-                    <div className="stat-card">
-                        <h3>Clicks</h3>
-                        <p>{analytics.clicks ?? 0}</p>
-                    </div>
-                </section>
-
-                {/* Event activity chart */}
-                <section className="chart-card">
-                    <div className="chart-header">
-                        <div>
-                            <h2>Event Activity</h2>
-                            <p>Participant interactions over time</p>
-                        </div>
-                    </div>
+                {/* Event activity */}
+                <section className="panel panel-outlined">
+                    <h2>Event Activity</h2>
 
                     {eventActivity.length === 0 ? (
                         <p className="empty-state">
@@ -816,94 +846,46 @@ function App() {
                         </p>
                     ) : (
                         <ResponsiveContainer width="100%" height={320}>
-                            <LineChart data={eventActivity}>
-                                <CartesianGrid strokeDasharray="3 3" />
+                            <BarChart data={eventActivity}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="minute" />
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
-                                <Line
-                                    type="monotone"
-                                    dataKey="count"
-                                    name="Interactions"
-                                    stroke="#258f85"
-                                    strokeWidth={3}
-                                    dot={{ r: 4, fill: "#258f85" }}
-                                    activeDot={{ r: 6 }}
-                                />
-                            </LineChart>
+                                <Bar dataKey="count" name="Interactions" radius={[4, 4, 0, 0]}>
+                                    {eventActivity.map((_, index) => (
+                                        <Cell
+                                            key={index}
+                                            fill={index % 2 === 0 ? "#b4dacd" : "#4a9488"}
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
                         </ResponsiveContainer>
                     )}
                 </section>
 
-                {/* Task results */}
-                <section className="analytics-card">
-                    <h2>Task Results</h2>
-                    <p className="card-description">
-                        How participants performed on each task
-                    </p>
-
-                    {taskResults.length === 0 ? (
-                        <p className="empty-state">No task results available yet.</p>
-                    ) : (
-                        <div className="task-results">
-                            {taskResults.map((task) => {
-                                const completed = Number(task.completed) || 0;
-                                const skipped = Number(task.skipped) || 0;
-                                const total = completed + skipped;
-                                const rate = total
-                                    ? Math.round((completed / total) * 100)
-                                    : 0;
-
-                                return (
-                                    <div
-                                        className="task-result-row"
-                                        key={task.taskId}
-                                    >
-                                        <div className="task-info">
-                                            <strong>Task {task.taskId}</strong>
-                                            <span>{task.taskTitle}</span>
-                                        </div>
-                                        <div className="task-stats">
-                                            <span className="completed">
-                                                ✓ {completed} Completed
-                                            </span>
-                                            <span className="skipped">
-                                                {skipped} Skipped
-                                            </span>
-                                            <strong>{rate}%</strong>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-                </section>
-
                 {/* Participant feedback */}
-                <section className="analytics-card">
+                <section className="panel panel-filled">
                     <h2>Participant Feedback</h2>
-                    <p className="card-description">
-                        Feedback collected after the usability test
-                    </p>
 
                     <div className="feedback-summary">
                         <div className="feedback-stat">
-                            <span>Responses</span>
                             <strong>{feedbackSummary.responses ?? 0}</strong>
+                            <span>responses</span>
                         </div>
                         <div className="feedback-stat">
-                            <span>Website Ease</span>
                             <strong>
                                 {feedbackSummary.averageEaseOfUse ?? "—"}
                                 {feedbackSummary.averageEaseOfUse != null ? "/5" : ""}
                             </strong>
+                            <span>website ease</span>
                         </div>
                         <div className="feedback-stat">
-                            <span>Task Ease</span>
                             <strong>
                                 {feedbackSummary.averageTaskEase ?? "—"}
                                 {feedbackSummary.averageTaskEase != null ? "/5" : ""}
                             </strong>
+                            <span>task ease</span>
                         </div>
                     </div>
 
@@ -913,42 +895,52 @@ function App() {
                         {feedbackComments.length === 0 ? (
                             <p className="empty-state">No written feedback yet.</p>
                         ) : (
-                            feedbackComments.map((feedback, index) => (
-                                <article className="feedback-comment" key={index}>
-                                    <div className="feedback-ratings">
-                                        <span>Website: {feedback.easeOfUse ?? "—"}/5</span>
-                                        <span>Tasks: {feedback.taskEase ?? "—"}/5</span>
-                                    </div>
+                            feedbackComments.map((feedback, index) => {
+                                const date = formatCommentDate(
+                                    feedback.createdAt || feedback.created_at
+                                );
 
-                                    {feedback.confusing && (
-                                        <p>
-                                            <strong>Difficulties: </strong>
-                                            {feedback.confusing}
-                                        </p>
-                                    )}
+                                return (
+                                    <article className="feedback-comment" key={index}>
+                                        {date && <span className="comment-date">{date}</span>}
 
-                                    {feedback.additionalFeedback && (
                                         <p>
-                                            <strong>Additional feedback: </strong>
-                                            {feedback.additionalFeedback}
+                                            <span>Website Ease: </span>
+                                            <em>{feedback.easeOfUse ?? "—"}/5</em>
                                         </p>
-                                    )}
-                                </article>
-                            ))
+                                        <p>
+                                            <span>Task Ease: </span>
+                                            <em>{feedback.taskEase ?? "—"}/5</em>
+                                        </p>
+
+                                        {feedback.confusing && (
+                                            <p>
+                                                <span>Difficulties: </span>
+                                                <em>{feedback.confusing}</em>
+                                            </p>
+                                        )}
+
+                                        {feedback.additionalFeedback && (
+                                            <p>
+                                                <span>Additional Feedback: </span>
+                                                <em>{feedback.additionalFeedback}</em>
+                                            </p>
+                                        )}
+                                    </article>
+                                );
+                            })
                         )}
                     </div>
                 </section>
 
-                {/* Most clicked elements */}
-                <section className="analytics-card">
-                    <h2>Most Clicked Elements</h2>
-                    <p className="card-description">
-                        Elements participants interacted with most often
-                    </p>
+                {/* Most clicked elements (not in the new mockup — remove if you cut it) */}
+                {mostClickedElements.length > 0 && (
+                    <section className="panel panel-outlined">
+                        <h2>Most Clicked Elements</h2>
+                        <p className="card-description">
+                            Elements participants interacted with most often
+                        </p>
 
-                    {mostClickedElements.length === 0 ? (
-                        <p className="empty-state">No click data available yet.</p>
-                    ) : (
                         <div className="clicked-elements">
                             {mostClickedElements.slice(0, 5).map((item, index) => (
                                 <div
@@ -956,28 +948,22 @@ function App() {
                                     key={`${item.element}-${index}`}
                                 >
                                     <div className="element-info">
-                                        <span className="element-rank">
-                                            {index + 1}
-                                        </span>
-                                        <span className="element-name">
-                                            {item.element}
-                                        </span>
+                                        <span className="element-rank">{index + 1}</span>
+                                        <span className="element-name">{item.element}</span>
                                     </div>
                                     <strong>{item.clicks}</strong>
                                 </div>
                             ))}
                         </div>
-                    )}
-                </section>
+                    </section>
+                )}
 
                 {/* Scroll depth */}
-                <section className="chart-card">
-                    <div className="chart-header">
-                        <div>
-                            <h2>Scroll Depth</h2>
-                            <p>How far participants scrolled on the website</p>
-                        </div>
-                    </div>
+                <section className="panel panel-outlined">
+                    <h2>Scroll Depth</h2>
+                    <p className="card-description">
+                        How far participants scrolled on the landing page of your site.
+                    </p>
 
                     {scrollDepth.length === 0 ? (
                         <p className="empty-state">No scroll data available yet.</p>
@@ -997,8 +983,8 @@ function App() {
                                 <Bar
                                     dataKey="participants"
                                     name="Participants"
-                                    fill="#258f85"
-                                    radius={[6, 6, 0, 0]}
+                                    fill="#0f9484"
+                                    radius={[4, 4, 0, 0]}
                                 />
                             </BarChart>
                         </ResponsiveContainer>
@@ -1006,18 +992,18 @@ function App() {
                 </section>
 
                 {/* Click heatmap */}
-                <section className="chart-card">
-                    <div className="chart-header">
-                        <div>
-                            <h2>Click Heatmap</h2>
-                            <p>Where participants clicked on the website</p>
-                        </div>
-                    </div>
+                <section className="panel panel-filled">
+                    <h2>Website Heatmap</h2>
+                    <p className="card-description">
+                        This heatmap shows exactly where participants clicked on your site.
+                    </p>
 
                     {!analytics.screenshotUrl ? (
-                        <p className="empty-state">
-                            A website screenshot will appear here when available.
-                        </p>
+                        <div className="heatmap heatmap-empty">
+                            <p className="empty-state">
+                                A website screenshot will appear here when available.
+                            </p>
+                        </div>
                     ) : (
                         <div className="heatmap">
                             <img
@@ -1037,10 +1023,7 @@ function App() {
                                         <div
                                             key={index}
                                             className="click-point"
-                                            style={{
-                                                left: `${x}%`,
-                                                top: `${y}%`
-                                            }}
+                                            style={{ left: `${x}%`, top: `${y}%` }}
                                             title={`Click ${index + 1}`}
                                         />
                                     );
@@ -1050,6 +1033,9 @@ function App() {
                     )}
                 </section>
             </main>
+
+            {createStudyModal}
+            {footer}
         </div>
     );
 }

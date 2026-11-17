@@ -1,0 +1,356 @@
+
+/* Auth.css */
+
+.auth-page {
+    --forest: #194f50;
+    --teal: #258f85;
+    --mint: #e2f0e9;
+    --sage: #a9d2c3;
+    --cream: #fbfaf6;
+    --peach: #e9967c;
+    --ink: #264c4b;
+    --muted: #81968b;
+
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 15px 20px 60px;
+    color: var(--ink);
+    background-color: var(--cream);
+    background-image: radial-gradient(
+    circle,
+    rgba(86, 113, 102, 0.14) 2.2px,
+    transparent 2.5px
+    );
+    background-size: 26px 26px;
+    font-family: "DM Sans", sans-serif;
+    cursor: url("/cursor.png") 0 0, auto;
+}
+
+/* Navigation */
+
+.auth-navbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 62px;
+    margin: 0 auto;
+    padding: 10px 18px;
+    border-radius: 16px;
+    background: #e2f0e9;
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--forest);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-brand img {
+    width: 27px;
+    height: 27px;
+    object-fit: contain;
+}
+
+.auth-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.auth-nav-links a {
+    color: var(--forest);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.auth-nav-links a:hover {
+    color: var(--peach);
+}
+
+.auth-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-nav-actions button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 30px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.auth-nav-actions button:hover {
+    transform: translateY(-2px);
+}
+
+.auth-nav-login {
+    color: var(--forest);
+    background: var(--cream);
+}
+
+.auth-nav-create {
+    color: white;
+    background: var(--teal);
+}
+
+.auth-nav-create:hover {
+    background: var(--forest);
+}
+
+.auth-nav-login.active {
+    background: #c8e0d5;
+}
+
+.auth-nav-create.active {
+    background: var(--forest);
+}
+
+/* Form positioning */
+
+.auth-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 650px;
+    padding: 55px 20px 30px;
+}
+
+.auth-form-wrapper {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.auth-form-wrapper h1 {
+    margin: 0 0 25px;
+    color: var(--forest);
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.auth-field label {
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.auth-field input {
+    width: 100%;
+    min-height: 43px;
+    padding: 11px 13px;
+    border: 1px solid #dce5dd;
+    border-radius: 3px;
+    outline: none;
+    color: var(--ink);
+    background: rgba(245, 247, 243, 0.95);
+    font-family: inherit;
+    font-size: 0.85rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-field input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(37, 143, 133, 0.12);
+}
+
+.auth-field input::placeholder {
+    color: #a8b5ac;
+}
+
+.auth-submit {
+    align-self: center;
+    min-width: 145px;
+    margin-top: 5px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    background: var(--teal);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+    background: var(--forest);
+    transform: translateY(-2px);
+}
+
+.auth-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.auth-error {
+    margin: 0;
+    color: #b94e45;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.auth-switch {
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.auth-switch button {
+    padding: 0;
+    border: none;
+    color: var(--teal);
+    background: none;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.auth-switch button:hover {
+    color: var(--forest);
+    text-decoration: underline;
+}
+
+/* Create account */
+
+.create-account-wrapper {
+    max-width: 350px;
+}
+
+.create-account-wrapper h1 {
+    margin-bottom: 22px;
+}
+
+
+/* Custom cursors */
+
+/* Default cursor across authentication navbar */
+.app-shell .home-navbar {
+    cursor: url("/cursor.png") 0 0, auto;
+}
+
+/* Hover cursor for navbar links and buttons */
+.app-shell .home-navbar a,
+.app-shell .home-navbar button {
+    cursor: url("/hovercursor.png") 8 4, pointer;
+}
+
+/* Hover cursor inside authentication forms */
+.auth-page a,
+.auth-page button,
+.auth-page summary {
+    cursor: url("/hovercursor.png") 8 4, pointer;
+}
+
+/* Normal text cursor for form fields */
+.auth-page input,
+.auth-page textarea {
+    cursor: text;
+}
+
+
+/* Responsive layout */
+
+@media (max-width: 700px) {
+    .auth-page {
+        padding: 10px 12px 35px;
+    }
+
+    .auth-navbar {
+        min-height: 58px;
+        padding: 9px 12px;
+    }
+
+    .auth-brand {
+        font-size: 0.9rem;
+    }
+
+    .auth-nav-links {
+        display: none;
+    }
+
+    .auth-nav-actions {
+        gap: 6px;
+    }
+
+    .auth-nav-actions button {
+        padding: 8px 10px;
+        font-size: 0.68rem;
+    }
+
+    .auth-content {
+        min-height: 650px;
+        padding: 65px 10px 35px;
+    }
+
+    .auth-form-wrapper {
+        max-width: 330px;
+    }
+
+    .flower-background {
+        opacity: 0.65;
+    }
+}
+
+@media (max-width: 400px) {
+    .auth-brand img {
+        width: 23px;
+        height: 23px;
+    }
+
+    .auth-brand {
+        font-size: 0.8rem;
+    }
+
+    .auth-nav-actions button {
+        padding: 7px 9px;
+        font-size: 0.63rem;
+    }
+}
+
+/* Keep decorative flowers behind the navbar */
+.flower-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Keep authentication content above the background */
+.auth-content {
+    position: relative;
+    z-index: 1;
+}

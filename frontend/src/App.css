@@ -25,6 +25,11 @@
     --ri-danger: #b84e4e;
     --ri-radius: 14px;
     --ri-shadow: 0 2px 8px rgba(25, 79, 80, 0.045);
+        /* Shared homepage/authentication colors */
+    --forest: #194f50;
+    --teal: #258f85;
+    --mint: #e2f0e9;
+    --cream: #fbfaf6;
 }
 
 * {
@@ -1303,4 +1308,417 @@ h3 {
 .auth-switch button:hover {
     background: transparent;
     text-decoration: underline;
+}
+
+
+/* =========================
+   Rounded authentication navbar
+   ========================= */
+
+.site-navbar.auth-navbar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    width: calc(100% - 64px);
+    max-width: 1380px;
+    min-height: 76px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 24px auto 0;
+    padding: 10px 28px;
+    border: 1px solid rgba(25, 79, 80, 0.08);
+    border-radius: 999px;
+    background: #fbfaf6;
+    box-shadow: 0 5px 22px rgba(25, 79, 80, 0.07);
+}
+
+.auth-navbar .site-navbar-logo {
+    width: 230px;
+    height: 48px;
+}
+
+.auth-navbar .site-navbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.auth-navbar .navbar-prompt {
+    color: #49675d;
+    font-size: 0.9rem;
+}
+
+.auth-navbar .navbar-primary-button {
+    padding: 12px 24px;
+    border: 1px solid #258f85;
+    border-radius: 999px;
+    background: #258f85;
+    color: white;
+    font-weight: 700;
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.auth-navbar .navbar-primary-button:hover {
+    background: #1d776f;
+    transform: translateY(-2px);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .site-navbar.auth-navbar {
+        width: calc(100% - 32px);
+        min-height: 65px;
+        align-items: center;
+        flex-direction: row;
+        padding: 10px 16px;
+        gap: 10px;
+    }
+
+    .auth-navbar .site-navbar-logo {
+        width: 145px;
+        height: 40px;
+    }
+
+    .auth-navbar .site-navbar-actions {
+        width: auto;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    .auth-navbar .navbar-prompt {
+        display: none;
+    }
+
+    .auth-navbar .navbar-primary-button {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+}
+
+
+/* =========================
+   First-time researcher dashboard
+   ========================= */
+
+.first-study-welcome {
+    width: 100%;
+    padding: 30px 0 50px;
+}
+
+.first-study-heading {
+    max-width: 760px;
+    margin: 0 auto 34px;
+    text-align: center;
+}
+
+.first-study-eyebrow {
+    display: inline-block;
+    margin-bottom: 14px;
+    color: var(--ri-teal);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+}
+
+.first-study-heading h1 {
+    margin-bottom: 14px;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 700;
+}
+
+.first-study-heading p {
+    max-width: 620px;
+    margin: 0 auto;
+    color: #718078;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.first-study-card {
+    position: relative;
+    max-width: 850px;
+    margin: 0 auto 30px;
+    padding: 48px 30px;
+    overflow: hidden;
+    border: 1px solid var(--ri-border);
+    border-radius: 20px;
+    background: var(--ri-white);
+    box-shadow: 0 8px 28px rgba(25, 79, 80, 0.055);
+    text-align: center;
+}
+
+.first-study-flower {
+    display: flex;
+    width: 76px;
+    height: 76px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: var(--ri-mint);
+    color: var(--ri-teal);
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+.first-study-card h2 {
+    margin-bottom: 12px;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.first-study-card > p {
+    max-width: 520px;
+    margin: 0 auto 24px;
+    color: var(--ri-muted);
+    line-height: 1.7;
+}
+
+.first-study-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 27px;
+    border: 1px solid var(--ri-teal);
+    border-radius: 999px;
+    background: var(--ri-teal);
+    color: white;
+    font-weight: 700;
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.first-study-button:hover {
+    transform: translateY(-2px);
+    background: var(--ri-teal-dark);
+}
+
+.first-study-note {
+    display: block;
+    margin-top: 13px;
+    color: var(--ri-muted);
+    font-size: 0.82rem;
+}
+
+.first-study-steps {
+    display: grid;
+    max-width: 1000px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin: 0 auto;
+}
+
+.first-study-steps article {
+    padding: 23px;
+    border: 1px solid var(--ri-border);
+    border-radius: 14px;
+    background: #fbfdfb;
+}
+
+.first-study-step-icon {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    border-radius: 11px;
+    background: var(--ri-mint);
+    color: var(--ri-deep-teal);
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.first-study-steps h3 {
+    margin-bottom: 7px;
+}
+
+.first-study-steps p {
+    margin: 0;
+    color: var(--ri-muted);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+
+@media (max-width: 700px) {
+    .first-study-welcome {
+        padding-top: 18px;
+    }
+
+    .first-study-card {
+        padding: 35px 20px;
+    }
+
+    .first-study-steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================
+   ROOTED INSIGHTS DASHBOARD - VISUAL UPDATE
+   ========================================= */
+
+/* Dashboard background */
+.dashboard {
+    min-height: 100vh;
+    background-color: #fbfaf6;
+    background-image: radial-gradient(
+        circle,
+        rgba(86, 113, 102, 0.14) 2.2px,
+        transparent 2.5px
+    );
+    background-size: 26px 26px;
+}
+
+/* Dashboard navbar */
+.dashboard > .site-navbar {
+    position: sticky;
+    top: 15px;
+    z-index: 100;
+    width: calc(100% - 40px);
+    max-width: 1440px;
+    min-height: 88px;
+    margin: 15px auto 0;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 23px;
+    background: #e2f0e9;
+    box-shadow: 0 4px 15px rgba(25, 79, 80, 0.08);
+}
+
+.dashboard .site-navbar-logo {
+    width: min(265px, 25vw);
+    height: 55px;
+}
+
+.dashboard .site-navbar-actions {
+    gap: 22px;
+}
+
+/* Study selector */
+.dashboard .study-selector {
+    color: #194f50;
+    font-size: 0.95rem;
+}
+
+.dashboard .study-selector select {
+    padding: 10px 30px 10px 12px;
+    border: 1px solid #cbdad2;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #194f50;
+}
+
+.dashboard .study-selector select:focus {
+    outline: 2px solid rgba(37, 143, 133, 0.25);
+}
+
+/* Main content */
+.dashboard-content {
+    padding-top: 48px;
+    padding-bottom: 80px;
+}
+
+/* Dashboard headings */
+.dashboard .page-header h1,
+.dashboard .first-study-heading h1 {
+    color: #194f50;
+}
+
+.dashboard .page-header .study-subtitle {
+    color: #258f85;
+}
+
+/* Shared cards */
+.dashboard .chart-card,
+.dashboard .analytics-card,
+.dashboard .participant-link-card,
+.dashboard .create-study-card {
+    border: 1px solid rgba(203, 218, 210, 0.85);
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 5px 20px rgba(25, 79, 80, 0.045);
+}
+
+/* Statistic cards */
+.dashboard .stats-grid {
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+.dashboard .stat-card {
+    min-height: 145px;
+    border: 1px solid #dfe7e1;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(25, 79, 80, 0.04);
+}
+
+.dashboard .stat-card h3 {
+    color: #81968b;
+}
+
+.dashboard .stat-card p {
+    color: #194f50;
+}
+
+/* Buttons */
+.dashboard .navbar-primary-button,
+.dashboard .participant-link-card > button,
+.dashboard .create-study-submit,
+.dashboard .first-study-button,
+.dashboard .link-box button {
+    border: none;
+    border-radius: 999px;
+    background: #258f85;
+    color: white;
+    transition: background 180ms ease, transform 180ms ease;
+}
+
+.dashboard .navbar-primary-button:hover,
+.dashboard .participant-link-card > button:hover,
+.dashboard .create-study-submit:hover,
+.dashboard .first-study-button:hover,
+.dashboard .link-box button:hover {
+    background: #194f50;
+    transform: translateY(-2px);
+}
+
+/* Chart and analytics headings */
+.dashboard .chart-header h2,
+.dashboard .analytics-card > h2 {
+    color: #194f50;
+}
+
+/* Website badge */
+.dashboard .website-badge {
+    border-radius: 12px;
+    background: #e2f0e9;
+    box-shadow: none;
+}
+
+.dashboard .website-badge a {
+    color: #258f85;
+}
+
+/* Responsive navbar */
+@media (max-width: 640px) {
+    .dashboard > .site-navbar {
+        width: calc(100% - 24px);
+        min-height: auto;
+        margin-top: 12px;
+        padding: 14px 18px;
+        border-radius: 18px;
+    }
+
+    .dashboard .site-navbar-logo {
+        width: 215px;
+        height: 46px;
+    }
+
+    .dashboard-content {
+        padding-top: 30px;
+    }
 }

@@ -1,5 +1,7 @@
+
 import "./Home.css";
-import { useRef } from "react"; // for tilting
+import { useRef } from "react";
+import Navbar from "./Navbar";
 
 const faqs = [
     {
@@ -59,10 +61,9 @@ const steps = [
 const chartBars = [35, 52, 43, 72, 48, 62, 40, 83, 57, 70, 47, 91, 65, 76];
 
 export default function Home({ onLogin, onCreateAccount }) {
-    
     const dashboardRef = useRef(null);
 
-    const handleChartMouseMove = (e) => { // for tilting of the graph card
+    const handleChartMouseMove = (e) => {
         const card = dashboardRef.current;
         if (!card) return;
 
@@ -88,31 +89,18 @@ export default function Home({ onLogin, onCreateAccount }) {
         dashboardRef.current.style.transform =
             "perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
     };
-        
-        
+
     return (
         <div className="home-page" id="top">
+
             {/* NAVBAR */}
-            <nav className="home-navbar">
-                <a className="home-brand" href="/" aria-label="Rooted Insights home">
-                    <img src="/RootedInsights.svg" alt="Rooted Insights" />
-                </a>
-
-                <div className="home-nav-links">
-                    <a href="#about">About</a>
-                    <a href="#faq">FAQ</a>
-                    <a href="#how-it-works">How It Works</a>
-                </div>
-
-                <div className="home-nav-actions">
-                    <button className="home-login-link" onClick={onLogin}>
-                        Log In
-                    </button>
-                    <button className="home-nav-cta" onClick={onCreateAccount}>
-                        Create Account
-                    </button>
-                </div>
-            </nav>
+            <Navbar
+                page="home"
+                onNavigate={(page) => {
+                    if (page === "login") onLogin();
+                    if (page === "create-account") onCreateAccount();
+                }}
+            />
 
             <main>
                 {/* HERO */}
@@ -248,7 +236,7 @@ export default function Home({ onLogin, onCreateAccount }) {
                             <article className="mission-card">
                                 <h3>Our Mission</h3>
                                 <img
-                                    src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=85"
+                                    src="[https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=85](https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format\&fit=crop\&w=900\&q=85)"
                                     alt="A team collaborating around a table"
                                 />
                                 <p>
@@ -261,7 +249,7 @@ export default function Home({ onLogin, onCreateAccount }) {
                             <article className="mission-card">
                                 <h3>Our Approach</h3>
                                 <img
-                                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=85"
+                                    src="[https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=85](https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format\&fit=crop\&w=900\&q=85)"
                                     alt="Team members working together"
                                 />
                                 <p>
@@ -274,7 +262,7 @@ export default function Home({ onLogin, onCreateAccount }) {
                             <article className="mission-card">
                                 <h3>Our Goal</h3>
                                 <img
-                                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=85"
+                                    src="[https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=85](https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format\&fit=crop\&w=900\&q=85)"
                                     alt="Researchers discussing ideas together"
                                 />
                                 <p>
@@ -299,10 +287,7 @@ export default function Home({ onLogin, onCreateAccount }) {
                                 <details className="faq-item" key={index}>
                                     <summary>
                                         <span>{faq.question}</span>
-                                        <span
-                                            className="faq-toggle"
-                                            aria-hidden="true"
-                                        >
+                                        <span className="faq-toggle" aria-hidden="true">
                                             +
                                         </span>
                                     </summary>
@@ -315,10 +300,7 @@ export default function Home({ onLogin, onCreateAccount }) {
                 </section>
 
                 {/* HOW IT WORKS */}
-                <section
-                    className="home-how-it-works"
-                    id="how-it-works"
-                >
+                <section className="home-how-it-works" id="how-it-works">
                     <div className="how-inner">
                         <div className="how-heading">
                             <h2>How It Works</h2>

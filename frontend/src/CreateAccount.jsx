@@ -1,5 +1,8 @@
 
 import { useState } from "react";
+import FlowerBackground from "./FlowerBackground";
+import "./CreateAccount.css";
+import Navbar from "./Navbar";
 
 const API_URL = "http://localhost:3000";
 
@@ -31,19 +34,21 @@ function CreateAccount({ onLoginPage, onAccountCreated }) {
             const response = await fetch(`${API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     name: name.trim(),
                     email: email.trim(),
-                    password,
-                }),
+                    password
+                })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Could not create your account.");
+                throw new Error(
+                    data.message || "Could not create your account."
+                );
             }
 
             if (data.sessionToken) {
@@ -52,89 +57,154 @@ function CreateAccount({ onLoginPage, onAccountCreated }) {
             } else {
                 onLoginPage();
             }
+
         } catch (err) {
-            setError(err.message || "Something went wrong. Please try again.");
+            console.error("Registration error:", err);
+            setError(
+                err.message || "Something went wrong. Please try again."
+            );
+
         } finally {
             setCreating(false);
         }
     };
 
+    const handleNavigation = (page) => {
+        if (page === "login") {
+            onLoginPage();
+        } else if (page === "create-account") {
+            // Already on the create account page.
+            return;
+        } else if (page === "home") {
+            window.location.href = "/";
+        }
+    };
+
     return (
-        <main className="login-page">
-            <section className="login-card create-account-card">
-                <p className="auth-eyebrow">ROOTED INSIGHTS</p>
+        <main className="auth-page">
 
-                <h1>Create your account</h1>
-                <p>
-                    Start turning user behavior into meaningful insights.
-                </p>
+            {/* NAVBAR */}
+            <Navbar
+                page="create-account"
+                onNavigate={handleNavigation}
+            />
 
-                <form onSubmit={handleSubmit}>
-                    <label htmlFor="account-name">Full name</label>
-                    <input
-                        id="account-name"
-                        type="text"
-                        autoComplete="name"
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                        placeholder="Your full name"
-                        required
-                    />
+            {/* FLOWER BACKGROUND */}
+            <FlowerBackground />
 
-                    <label htmlFor="account-email">Email address</label>
-                    <input
-                        id="account-email"
-                        type="email"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        placeholder="you@example.com"
-                        required
-                    />
+            {/* CREATE ACCOUNT FORM */}
+            <section className="auth-content">
+                <div className="auth-form-wrapper create-account-wrapper">
 
-                    <label htmlFor="account-password">Password</label>
-                    <input
-                        id="account-password"
-                        type="password"
-                        autoComplete="new-password"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        placeholder="At least 8 characters"
-                        minLength={8}
-                        required
-                    />
+                    <h1>Create New Account</h1>
 
-                    <label htmlFor="confirm-password">Confirm password</label>
-                    <input
-                        id="confirm-password"
-                        type="password"
-                        autoComplete="new-password"
-                        value={confirmPassword}
-                        onChange={(event) =>
-                            setConfirmPassword(event.target.value)
-                        }
-                        placeholder="Enter your password again"
-                        required
-                    />
+                    <form
+                        onSubmit={handleSubmit}
+                        className="auth-form"
+                    >
+                        <div className="auth-field">
+                            <label htmlFor="account-name">
+                                Full name
+                            </label>
 
-                    {error && (
-                        <p className="login-error" role="alert">
-                            {error}
-                        </p>
-                    )}
+                            <input
+                                id="account-name"
+                                type="text"
+                                autoComplete="name"
+                                value={name}
+                                onChange={(event) =>
+                                    setName(event.target.value)
+                                }
+                                placeholder="Your full name"
+                                required
+                            />
+                        </div>
 
-                    <button type="submit" disabled={creating}>
-                        {creating ? "Creating account..." : "Create Account"}
-                    </button>
-                </form>
+                        <div className="auth-field">
+                            <label htmlFor="account-email">
+                                Email
+                            </label>
 
-                <p className="auth-switch">
-                    Already have an account?{" "}
-                    <button type="button" onClick={onLoginPage}>
-                        Log in
-                    </button>
-                </p>
+                            <input
+                                id="account-email"
+                                type="email"
+                                autoComplete="email"
+                                value={email}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
+                                placeholder="researcher@example.com"
+                                required
+                            />
+                        </div>
+
+                        <div className="auth-field">
+                            <label htmlFor="account-password">
+                                Password
+                            </label>
+
+                            <input
+                                id="account-password"
+                                type="password"
+                                autoComplete="new-password"
+                                value={password}
+                                onChange={(event) =>
+                                    setPassword(event.target.value)
+                                }
+                                placeholder="At least 8 characters"
+                                minLength={8}
+                                required
+                            />
+                        </div>
+
+                        <div className="auth-field">
+                            <label htmlFor="confirm-password">
+                                Confirm password
+                            </label>
+
+                            <input
+                                id="confirm-password"
+                                type="password"
+                                autoComplete="new-password"
+                                value={confirmPassword}
+                                onChange={(event) =>
+                                    setConfirmPassword(event.target.value)
+                                }
+                                placeholder="Enter your password again"
+                                required
+                            />
+                        </div>
+
+                        {error && (
+                            <p className="auth-error" role="alert">
+                                {error}
+                            </p>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="auth-submit"
+                            disabled={creating}
+                        >
+                            {creating
+                                ? "Creating account..."
+                                : "Create Account"}
+                        </button>
+                    </form>
+
+                    <p className="auth-switch">
+                        Already have an account?{" "}
+                        <button
+                            type="button"
+                            onClick={onLoginPage}
+                        >
+                            Log in
+                        </button>
+                    </p>
+
+                </div>
             </section>
+
         </main>
     );
 }
