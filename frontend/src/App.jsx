@@ -744,6 +744,11 @@ function App() {
                                 src={`${API_URL}${analytics.screenshotUrl}`}
                                 alt="Screenshot of the tested website"
                             />
+                            <span className="selection-handle top-left"></span>
+                            <span className="selection-handle top-right"></span>
+                            <span className="selection-handle bottom-left"></span>
+                            <span className="selection-handle bottom-right"></span>
+                            <span className="screenshot-study-label">{studyName}</span>
                         </div>
                     )}
                 </section>
