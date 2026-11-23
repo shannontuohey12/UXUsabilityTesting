@@ -136,4 +136,42 @@ router.get("/", requireAuth, (req, res) => {
     }
 });
 
+// Get tasks for a participant usability study
+router.get("/:studyId/tasks", (req, res) => {
+    try {
+        const studyId = Number(req.params.studyId);
+
+        const study = db.prepare(`
+            SELECT id
+            FROM studies
+            WHERE id = ?
+        `).get(studyId);
+
+        if (!study) {
+            return res.status(404).json({
+                success: false,
+                message: "Study not found."
+            });
+        }
+
+        const tasks = db.prepare(`
+            SELECT id, title, instructions, position
+            FROM study_tasks
+            WHERE study_id = ?
+            ORDER BY position ASC
+        `).all(studyId);
+
+        res.json(tasks);
+
+    } catch (error) {
+        console.error("Error fetching study tasks:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Could not fetch study tasks."
+        });
+    }
+});
+
+
 module.exports = router;

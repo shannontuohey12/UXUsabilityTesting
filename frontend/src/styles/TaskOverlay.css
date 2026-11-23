@@ -1,0 +1,241 @@
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+
+#ux-task-overlay {
+    --ux-teal: #217b7c;
+    --ux-teal-dark: #194f50;
+    --ux-mint: #f3f6f2;
+    --ux-sage: #a9d2c3;
+    --ux-coral: #e9967c;
+    --ux-text: #172321;
+
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 342px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 12px;
+    background-color: #ffffff;
+    background-image: radial-gradient(
+        circle,
+        rgba(86, 113, 102, 0.14) 1.5px,
+        transparent 1.8px
+    );
+    background-size: 19px 19px;
+    border: 1.5px solid var(--ux-teal);
+    border-radius: 17px;
+    box-shadow: 0 8px 24px rgba(25, 79, 80, 0.12);
+    z-index: 999999;
+    font-family: "DM Sans", Arial, Helvetica, sans-serif;
+    color: var(--ux-text);
+    line-height: 1.4;
+}
+
+#ux-task-overlay *,
+#ux-task-overlay *::before,
+#ux-task-overlay *::after {
+    box-sizing: border-box;
+}
+
+#ux-task-overlay .ux-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 8px 12px;
+    margin-bottom: 9px;
+}
+
+#ux-task-overlay .ux-logo {
+    display: block;
+    width: 185px;
+    max-width: calc(100% - 35px);
+    max-height: 43px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+#ux-task-overlay #ux-close-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #111;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+}
+
+#ux-task-overlay #ux-close-overlay:hover {
+    color: var(--ux-teal);
+}
+
+#ux-task-overlay .ux-intro {
+    margin: 0 12px 24px;
+    color: #111;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+#ux-task-overlay .ux-task-panel {
+    padding: 15px 16px 16px;
+    background: var(--ux-mint);
+    border-radius: 13px;
+}
+
+#ux-task-overlay #ux-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 5px 13px;
+    color: var(--ux-teal-dark);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#ux-task-overlay #ux-progress span:last-child {
+    color: var(--ux-coral);
+}
+
+#ux-task-overlay .ux-progress-track {
+    width: 100%;
+    height: 4px;
+    margin-bottom: 31px;
+    overflow: hidden;
+    background: #d8ddda;
+}
+
+#ux-task-overlay .ux-progress-fill {
+    height: 100%;
+    background: var(--ux-sage);
+    transition: width 0.25s ease;
+}
+
+#ux-task-overlay .ux-task {
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#ux-task-overlay .ux-task strong {
+    display: block;
+    margin: 0 5px 8px;
+    color: #111;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+#ux-task-overlay .ux-task p {
+    margin: 0 5px 18px;
+    color: #111;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+#ux-task-overlay .ux-task-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#ux-task-overlay .ux-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    min-height: 36px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--ux-teal);
+    border-radius: 999px;
+    background: var(--ux-teal);
+    color: white;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+#ux-task-overlay .ux-button:hover {
+    background: var(--ux-teal-dark);
+}
+
+#ux-task-overlay .ux-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+#ux-task-overlay .ux-secondary-button {
+    background: white;
+    color: var(--ux-teal);
+}
+
+#ux-task-overlay .ux-secondary-button:hover {
+    background: #e2f0e9;
+}
+
+#ux-task-overlay .ux-button:focus-visible,
+#ux-task-overlay #ux-close-overlay:focus-visible {
+    outline: 3px solid var(--ux-sage);
+    outline-offset: 3px;
+}
+
+#ux-task-overlay .ux-complete h2 {
+    margin: 12px 12px 10px;
+    color: var(--ux-teal-dark);
+    font-size: 29px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+#ux-task-overlay .ux-complete p {
+    margin: 0 12px 21px;
+    color: #111;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#ux-task-overlay .ux-complete .ux-button {
+    width: calc(100% - 24px);
+    margin: 0 12px;
+    min-height: 36px;
+}
+
+#ux-task-overlay .ux-footer {
+    margin: 12px 0 0;
+    color: #81968b;
+    font-size: 10px;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    #ux-task-overlay {
+        top: 10px;
+        right: 10px;
+        width: calc(100vw - 20px);
+        max-width: none;
+        max-height: calc(100vh - 20px);
+        padding: 12px;
+        border-radius: 15px;
+    }
+
+    #ux-task-overlay .ux-logo {
+        width: 170px;
+    }
+}

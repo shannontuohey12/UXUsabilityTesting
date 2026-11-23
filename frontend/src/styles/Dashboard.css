@@ -62,11 +62,20 @@
     transform: none;
 }
 
-/* Study picker: orange pill with a chevron */
-.dashboard .study-selector select {
+/* Study picker: orange pill with a centered chevron */
+.dashboard .study-selector {
+    display: block;
     min-width: 0;
-    max-width: 260px;
-    padding-right: 46px;
+}
+
+.dashboard .site-navbar .study-selector select {
+    box-sizing: border-box;
+    width: 260px;
+    max-width: 100%;
+    height: 40px;
+    padding: 0 46px 0 20px;
+    border: none;
+    border-radius: 999px;
     appearance: none;
     -webkit-appearance: none;
     background-color: #ebb87a;
@@ -74,11 +83,17 @@
     background-repeat: no-repeat;
     background-position: right 18px center;
     color: #194f50;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: normal;
+    text-align: left;
+    white-space: nowrap;
     text-overflow: ellipsis;
     cursor: pointer;
 }
 
-.dashboard .study-selector select:hover {
+.dashboard .site-navbar .study-selector select:hover {
     background-color: #e6ae69;
 }
 
@@ -343,14 +358,38 @@
     background: #fff;
 }
 
-.dashboard .website-badge span {
-    font-size: 0.8rem;
+.website-badge {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 12px 18px;
+    border: 1px solid var(--ri-border);
+    border-radius: 11px;
+    background: var(--ri-white);
+    box-shadow: 0 1px 2px rgba(25, 79, 80, 0.025);
 }
 
-.dashboard .website-badge a {
-    color: var(--ri-sand-text);
-    font-size: 0.8rem;
+.website-badge span {
+    color: #49675d;
+    font-size: 0.9rem;
+    font-weight: 700;
 }
+
+.website-badge a {
+    color: #E8B878;
+    font-size: 0.95rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.website-badge a:hover {
+    color: var(--ri-teal-dark);
+    text-decoration: underline;
+}
+
 
 .study-description {
     margin-bottom: 14px;

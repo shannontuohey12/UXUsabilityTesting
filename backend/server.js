@@ -28,6 +28,13 @@ app.use(
     )
 );
 
+app.use(
+    "/task-overlay",
+    express.static(
+        path.join(__dirname, "../frontend/dist/assets")
+    )
+);
+
 const PORT = 3000;
 
 // Middleware

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import FlowerBackground from "./FlowerBackground";
-import "./CreateAccount.css";
+import "./../styles/CreateAccount.css";
 import Navbar from "./Navbar";
 
 const API_URL = "http://localhost:3000";

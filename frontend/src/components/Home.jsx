@@ -1,5 +1,5 @@
 
-import "./Home.css";
+import "./../styles/Home.css";
 import { useRef } from "react";
 import Navbar from "./Navbar";
 

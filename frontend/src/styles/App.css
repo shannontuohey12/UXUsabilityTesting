@@ -272,37 +272,7 @@ h3 {
     font-weight: 400;
 }
 
-.website-badge {
-    display: inline-flex;
-    max-width: 100%;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px 14px;
-    padding: 12px 18px;
-    border: 1px solid var(--ri-border);
-    border-radius: 11px;
-    background: var(--ri-white);
-    box-shadow: 0 1px 2px rgba(25, 79, 80, 0.025);
-}
 
-.website-badge span {
-    color: #49675d;
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.website-badge a {
-    color: #c58b45;
-    font-size: 0.95rem;
-    font-weight: 600;
-    overflow-wrap: anywhere;
-    text-decoration: none;
-}
-
-.website-badge a:hover {
-    color: var(--ri-teal-dark);
-    text-decoration: underline;
-}
 
 /* =========================
    Shared card styles
@@ -1692,16 +1662,7 @@ h3 {
     color: #194f50;
 }
 
-/* Website badge */
-.dashboard .website-badge {
-    border-radius: 12px;
-    background: #e2f0e9;
-    box-shadow: none;
-}
 
-.dashboard .website-badge a {
-    color: #258f85;
-}
 
 /* Responsive navbar */
 @media (max-width: 640px) {

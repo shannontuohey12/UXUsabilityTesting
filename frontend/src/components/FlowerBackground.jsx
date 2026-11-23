@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from "react";
 import p5 from "p5";
-import "./FlowerBackground.css";
+import "../styles/FlowerBackground.css";
 
 export default function FlowerBackground() {
     const containerRef = useRef(null);
