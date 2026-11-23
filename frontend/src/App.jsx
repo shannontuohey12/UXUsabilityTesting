@@ -14,8 +14,8 @@ import ParticipantFeedback from "./components/ParticipantFeedback";
 import MostClickedElements from "./components/MostClickedElements";
 import WebsiteHeatmap from "./components/WebsiteHeatmap";
 import StudyHeader from "./components/StudyHeader";
-import "./styles/Dashboard.css";
 import "./styles/App.css";
+import "./styles/Dashboard.css";
 
 
 

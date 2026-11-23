@@ -378,7 +378,7 @@
 }
 
 .website-badge a {
-    color: #E8B878;
+    color: #c58b45;
     font-size: 0.95rem;
     font-weight: 600;
     overflow-wrap: anywhere;
@@ -390,6 +390,12 @@
     text-decoration: underline;
 }
 
+
+.dashboard .website-badge a {
+    color: #e9aa5b;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
 
 .study-description {
     margin-bottom: 14px;
